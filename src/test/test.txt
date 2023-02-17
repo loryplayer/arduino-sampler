@@ -1,0 +1,1 @@
+{JDBC_URL=jdbc:mysql://localhost:3306, PASS=root, RDBMS_NAME=null, SUB_PROTOCOL=jdbc:mysql, USER=root, RDBMS_URL=//localhost:3306}
