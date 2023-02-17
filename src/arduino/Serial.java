@@ -186,9 +186,6 @@ public class Serial {
      *     <li>
      *         {@link Collector} (per la temperature)
      *     </li>
-     *     <li>
-     *         {@link Collector} (per l'umidità)
-     *     </li>
      * </ul>
      */
     private void setDataCollector() {
@@ -196,9 +193,7 @@ public class Serial {
         this.collector_used = new CollectorList();
         this.samplingSettingsUsed = new SamplingSettings();
         Collector temperature_collector = new Collector('T');
-        Collector humidity_collector = new Collector('H');
         this.collector_used.add(temperature_collector);
-        this.collector_used.add(humidity_collector);
     }
 
     /**
@@ -298,10 +293,10 @@ public class Serial {
      *     </ul>
      * </p>
      * <h2 style="margin-bottom:0">
-     *     Temperature [T] / Humidity [H]
+     *     Temperature [T]
      * </h2>
      * <p>
-     *     Viene letto il dato corrispondente o alla Temperatura o all'Umidità e salvato all'interno dei raccoglitori.
+     *     Viene letto il dato corrispondente alla Temperatura e salvato all'interno dei raccoglitori.
      * </p>
      * L'esito di quest'operazione si divide in:
      * <ul style="margin-top:0">
@@ -313,7 +308,7 @@ public class Serial {
      *     </li>
      * </ul>
      *
-     * @param Command carattere corrispondente al comando da eseguire (R, T, H)
+     * @param Command carattere corrispondente al comando da eseguire (R, T)
      * @return {@code true} <br>
      * <ul style="margin-top:0">
      *     <li>
@@ -359,7 +354,7 @@ public class Serial {
                             this.close();
                             return true;
                         }
-                    } else if (Command == 'T' || Command == 'H') {
+                    } else if (Command == 'T') {
                         boolean status = this.collector_used.addDataToCollector(data, Command);
                         if (!status) // se si verificano errori durante la raccolta dei dati si lascia proseguire, se passa un tempo superiore a quello di timeout esce dalla funzione con valore [false]
                             continue;
@@ -387,7 +382,7 @@ public class Serial {
     /**
      * Metodo utilizzato per la scrittura sulla seriale e successivamente la lettura del dato da salvare.
      *
-     * @param cmd carattere corrispondente alla tipologia di dato da salvare (Temperature <b>[T]</b>, Humidity <b>[H]</b>)
+     * @param cmd carattere corrispondente alla tipologia di dato da salvare (Temperature <b>[T]</b>)
      * @return {@link Float} <br>
      * <ul style="margin-top:0">
      *     <li>
@@ -421,34 +416,20 @@ public class Serial {
         return this.write_and_get('T');
     }
 
-    /**
-     * Metodo utilizzato per ottenere il valore corrispondente all'umidità da parte del dispositivo connesso.
-     *
-     * @return {@link Float}
-     * @see #write_and_get(char)
-     * @see #read_command(char)
-     */
-    private Float read_humidity() {
-        return this.write_and_get('H');
-    }
 
     /**
      * Metodo utilizzato per la raccolta dei vari dati da leggere.
      *
      * @see #read_temperature()
-     * @see #read_humidity()
      * @see DataCollector
      */
     public void read_and_collect() {
         Float temperature = this.read_temperature();
-//        System.out.println(temperature);
-        Float humidity = this.read_humidity();
-        if (temperature == null || humidity == null)
+        if (temperature == null)
             return;
         DataCollector collector = new DataCollector();
         collector.setCollectionTime(System.currentTimeMillis());
         collector.add(primaryController.getDatabaseSelected().getDataStructure().getTemperatureColumnName(), temperature);
-        collector.add(primaryController.getDatabaseSelected().getDataStructure().getHumidityColumnName(), humidity);
         this.dataCollectorUsed.add(collector);
     }
 

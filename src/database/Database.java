@@ -298,7 +298,7 @@ public class Database implements DatabaseElement {
         if (this.driver == null) // se non possiede un driver
             return false;
         try (
-                Connection conn = DriverManager.getConnection(this.DATABASE_URL, this.driver.getUSER(), this.driver.getPASS()); //tento la connessione con le credenziali che sono state passate
+                Connection conn = DriverManager.getConnection(this.DATABASE_URL, this.driver.getUSER(), this.driver.getPASS()) //tento la connessione con le credenziali che sono state passate
         ) {
             conn.close(); //in caso di esito positivo, chiudo la connessione e restituisco il valore [true]
             return true;
@@ -361,8 +361,7 @@ public class Database implements DatabaseElement {
         this.checkStatement();
         DataCollector last_collector = primaryController.getSerialSelected().getDataCollectorList().getLastDataCollector();
         String query = "INSERT INTO " + this.databaseStructure.getTableName() + this.databaseStructure.getTuple_ValuesName() + " VALUES (" +
-                "'" + last_collector.getCollectionDateTime() + "', " + last_collector.getData(this.databaseStructure.getTemperatureColumnName()) + ", " +
-                last_collector.getData(this.databaseStructure.getHumidityColumnName()) + ");";
+                "'" + last_collector.getCollectionDateTime() + "', " + last_collector.getData(this.databaseStructure.getTemperatureColumnName()) + ");";
 //        System.out.println(query);
         try {
             this.statement.executeUpdate(query);

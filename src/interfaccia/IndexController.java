@@ -240,21 +240,10 @@ public class IndexController {
     private TextField temperatureIndicator;
 
     /**
-     * Variabile {@link TextField} utilizzata per indicare l'umidità dell'ultima misurazione.
-     */
-    @FXML
-    private TextField humidityIndicator;
-
-    /**
      * Variabile {@link TextField} utilizzata per indicare la temperatura media rispetto a tutti i campioni raccolti.
      */
     @FXML
     private TextField averageTemperatureIndicator;
-    /**
-     * Variabile {@link TextField} utilizzata per indicare l'umidità media rispetto a tutti i campioni raccolti.
-     */
-    @FXML
-    private TextField averageHumidityIndicator;
 
 
     /**
@@ -343,9 +332,7 @@ public class IndexController {
     public void setStage(Stage stage) {
         this.isOpened = true;
         this.stage = stage;
-        this.stage.setOnHidden(e -> {
-            this.exit();
-        });
+        this.stage.setOnHidden(e -> this.exit());
         this.loadInterface();
     }
 
@@ -858,19 +845,15 @@ public class IndexController {
             return;
         this.chart.getData().clear();
         String temperature_column_name = this.getDatabaseSelected().getDataStructure().getTemperatureColumnName();
-        String humidity_column_name = this.getDatabaseSelected().getDataStructure().getHumidityColumnName();
         DataCollector last_collector = this.getSerialSelected().getDataCollectorList().getLastDataCollector();
         if (last_collector == null)
             return;
         long last_time = last_collector.getCollectionTime();
         this.temperatureIndicator.setText(last_collector.getData(temperature_column_name).toString());
-        this.humidityIndicator.setText(last_collector.getData(humidity_column_name).toString());
 
 
         XYChart.Series<String, Float> series_t = new XYChart.Series<>();
         series_t.setName("Temperatura");
-        XYChart.Series<String, Float> series_h = new XYChart.Series<>();
-        series_h.setName("Umidità");
 
         this.time_axis.setLabel("Tempo [" + this.getSerialSelected().getSamplingSettings().getTimeIdentifier() + "]");
         /*
@@ -889,16 +872,12 @@ public class IndexController {
             DataCollector collector = this.getSerialSelected().getDataCollectorList().getDataCollectorFromEnd(i);
             if (collector != null) {
                 float temperature = collector.getData(temperature_column_name);
-                float humidity = collector.getData(humidity_column_name);
                 double time = Math.ceil((last_time - collector.getCollectionTime()) * this.getSerialSelected().getSamplingSettings().getMultiplier() * 100) / 100;
                 series_t.getData().add(new XYChart.Data<String, Float>(String.valueOf(time), temperature));
-                series_h.getData().add(new XYChart.Data<String, Float>(String.valueOf(time), humidity));
             }
         }
         this.chart.getData().add(series_t);
-        this.chart.getData().add(series_h);
         this.averageTemperatureIndicator.setText(this.getSerialSelected().getDataCollectorList().getDataAverages().get(temperature_column_name).toString());
-        this.averageHumidityIndicator.setText(this.getSerialSelected().getDataCollectorList().getDataAverages().get(humidity_column_name).toString());
         this.getDatabaseSelected().insert();
     }
 

@@ -21,9 +21,6 @@ import java.util.*;
  *         {@link #getTemperatureColumnName()}
  *     </li>
  *     <li>
- *         {@link #getHumidityColumnName()}
- *     </li>
- *     <li>
  *         {@link #getTuple_ValuesName()}
  *     </li>
  * </ul>
@@ -46,15 +43,6 @@ public class DatabaseStructure {
      */
     private final String[] defaultTypeTemperatureNames = new String[]{"temperature", "temp", "t"};
 
-    /**
-     * Variabile di tipo stringa che assumerà il nome della colonna relativa all'umidità.
-     */
-    private String humidityColumnName;
-
-    /**
-     * Array di variabili di tipo stringa, contenente i nomi generici relativi all'umidità <i>(a partire dal nome completo fino alla sua abbreviazione)</i>.
-     */
-    private final String[] defaultTypeHumidityNames = new String[]{"humidity", "hmd", "umd", "h", "u"};
 
     /**
      * Variabile di tipo stringa che assumerà il nome della tabella in cui verranno salvati i dati.
@@ -115,8 +103,7 @@ public class DatabaseStructure {
      *             Tipologia della variabile
      *         </li>
      *     </ul>
-     *     Dalle informazioni ottenute è possible verificare se la tabella selezionata presenta le caratteristiche per poter ospitare i dati che si intendono salvare (tempo, temperatura, umidità).
-     *
+     *     Dalle informazioni ottenute è possible verificare se la tabella selezionata presenta le caratteristiche per poter ospitare i dati che si intendono salvare (tempo, temperatura).
      *
      * @see #isSimilar(String, String)
      */
@@ -138,13 +125,6 @@ public class DatabaseStructure {
                                 break;
                             }
                         }
-                        for (String default_field : this.defaultTypeHumidityNames) {
-                            if (this.isSimilar(field, default_field)) {
-                                this.humidityColumnName = field;
-                                this.tableName = table_name;
-                                break;
-                            }
-                        }
                     } else if (Objects.equals(type, "datetime")) {
                         this.timeColumnName = field;
                         this.tableName = table_name;
@@ -154,7 +134,7 @@ public class DatabaseStructure {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        this.usable = this.timeColumnName != null && this.temperatureColumnName != null && this.humidityColumnName != null;
+        this.usable = this.timeColumnName != null && this.temperatureColumnName != null;
     }
 
     /**
@@ -338,15 +318,6 @@ public class DatabaseStructure {
         return this.temperatureColumnName;
     }
 
-    /**
-     * Metodo utilizzato per ottenere il nome della colonna riferita all'umidità
-     *
-     * @return {@link #humidityColumnName}
-     */
-
-    public String getHumidityColumnName() {
-        return this.humidityColumnName;
-    }
 
     /**
      * Metodo utilizzato per ottenere il nome della colonna riferita al tempo
@@ -362,9 +333,9 @@ public class DatabaseStructure {
      * Metodo utilizzato per ottenere i nomi relativi alle tabelle.
      * <p>viene utilizzato nel metodo {@link Database#insert()}.</p>
      * @return Stringa, struttura:
-     * <code>({@link #timeColumnName}, {@link #temperatureColumnName}, {@link #humidityColumnName})</code>
+     * <code>({@link #timeColumnName}, {@link #temperatureColumnName}</code>
      */
     public String getTuple_ValuesName() {
-        return " (" + this.timeColumnName + ", " + this.temperatureColumnName + ", " + this.humidityColumnName + ") ";
+        return " (" + this.timeColumnName + ", " + this.temperatureColumnName +") ";
     }
 }
