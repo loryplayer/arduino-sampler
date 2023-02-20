@@ -108,7 +108,7 @@ public class main_test {
             System.out.println("Failed to open port");
             return;
         }
-        ard_serial.read_and_collect();
+        ard_serial.readAndCollect();
         System.out.println(ard_serial.getDataCollectorList().getLastDataCollector().getData());
 
         if (ard_serial.close())

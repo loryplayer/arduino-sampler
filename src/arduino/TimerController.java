@@ -73,7 +73,7 @@ class Controller extends TimerTask {
     @Override
     public void run() {
         Platform.runLater(() -> {
-            PRIMARY_CONTROLLER.getSerialSelected().read_and_collect();
+            PRIMARY_CONTROLLER.getSerialSelected().readAndCollect();
             PRIMARY_CONTROLLER.refreshChart();
         });
     }

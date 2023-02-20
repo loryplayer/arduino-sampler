@@ -19,7 +19,7 @@ import static interfaccia.IndexController.PRIMARY_CONTROLLER;
  *         {@link #open(boolean)}
  *     </li>
  *     <li>
- *         {@link #read_and_collect()}
+ *         {@link #readAndCollect()}
  *     </li>
  *     <li>
  *         {@link #close()}
@@ -215,7 +215,7 @@ public class Serial {
     public boolean open() {
         this.serialPort.openPort();
         //ricezione da parte di arduino per quando è pronto
-        return this.read_command('R');
+        return this.readCommand('R');
     }
 
     /**
@@ -239,7 +239,7 @@ public class Serial {
         this.serialPort.openPort();
         if (check)
             //ricezione da parte di arduino per quando è pronto
-            this.read_command('R');
+            this.readCommand('R');
     }
 
     /**
@@ -325,7 +325,7 @@ public class Serial {
      *     </li>
      * </ul>
      */
-    private boolean read_command(char Command) {
+    private boolean readCommand(char Command) {
         long start_time = System.currentTimeMillis();
         if (Command == this.ReadyConnection) {
             try {
@@ -386,7 +386,7 @@ public class Serial {
      * @return {@link Float} <br>
      * <ul style="margin-top:0">
      *     <li>
-     *         se il dato è stato correttamente letto (vedi: {@link #read_command(char)})
+     *         se il dato è stato correttamente letto (vedi: {@link #readCommand(char)})
      *     </li>
      * </ul>
      * {@code false} <br>
@@ -397,9 +397,9 @@ public class Serial {
      * </ul>
      */
     // la classe Float può assumere valore null
-    private Float write_and_get(char cmd) {
+    private Float writeAndGet(char cmd) {
         this.write((byte) cmd);
-        boolean success = this.read_command(cmd);
+        boolean success = this.readCommand(cmd);
         if (!success)
             return null;
         return this.collector_used.getCollectorsFromIdentifier(cmd).getLastDataAsFloat();
@@ -409,22 +409,22 @@ public class Serial {
      * Metodo utilizzato per ottenere il valore corrispondente alla temperatura da parte del dispositivo connesso.
      *
      * @return {@link Float}
-     * @see #write_and_get(char)
-     * @see #read_command(char)
+     * @see #writeAndGet(char)
+     * @see #readCommand(char)
      */
-    private Float read_temperature() {
-        return this.write_and_get('T');
+    private Float readTemperature() {
+        return this.writeAndGet('T');
     }
 
 
     /**
      * Metodo utilizzato per la raccolta dei vari dati da leggere.
      *
-     * @see #read_temperature()
+     * @see #readTemperature()
      * @see DataCollector
      */
-    public void read_and_collect() {
-        Float temperature = this.read_temperature();
+    public void readAndCollect() {
+        Float temperature = this.readTemperature();
         if (temperature == null)
             return;
         DataCollector collector = new DataCollector();
