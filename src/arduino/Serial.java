@@ -6,7 +6,7 @@ import interfaccia.IndexController;
 import java.io.IOException;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * <p>Classe Serial, utilizzata per usufruire dei metodi contenuti all'interno della libreria {@link com.fazecast.jSerialComm}.</p>
@@ -255,9 +255,9 @@ public class Serial {
             this.serialPort.getOutputStream().write(b);
             this.serialPort.getOutputStream().flush();
         } catch (IOException e) {
-            primaryController.stopSampling();
-            primaryController.removeSerialSelected();
-            primaryController.getLogger().write("Errore durante la scrittura sulla seriale");
+            PRIMARY_CONTROLLER.stopSampling();
+            PRIMARY_CONTROLLER.removeSerialSelected();
+            PRIMARY_CONTROLLER.getLogger().write("Errore durante la scrittura sulla seriale");
 //            throw new RuntimeException(e);
         }
     }
@@ -342,7 +342,7 @@ public class Serial {
                 [Nomi_dispositivo] [stato]
 
              */
-            primaryController.getLogger().writeInline(this.deviceName + " (" + this.portName + ") ");
+            PRIMARY_CONTROLLER.getLogger().writeInline(this.deviceName + " (" + this.portName + ") ");
         }
         while (System.currentTimeMillis() - start_time < this.timeout) {
             try {
@@ -350,7 +350,7 @@ public class Serial {
                     int data = this.read();
                     if (Command == 'R') {
                         if (data == this.ReadyConnection) {
-                            primaryController.getLogger().write("[OK...]");
+                            PRIMARY_CONTROLLER.getLogger().write("[OK...]");
                             this.close();
                             return true;
                         }
@@ -372,8 +372,8 @@ public class Serial {
             }
         }
         if (Command != this.ReadyConnection)
-            primaryController.getLogger().writeInline("Errore durante la lettura dalla seriale ");
-        primaryController.getLogger().write("[Timeout...]");
+            PRIMARY_CONTROLLER.getLogger().writeInline("Errore durante la lettura dalla seriale ");
+        PRIMARY_CONTROLLER.getLogger().write("[Timeout...]");
 
         this.close();
         return false;
@@ -429,7 +429,7 @@ public class Serial {
             return;
         DataCollector collector = new DataCollector();
         collector.setCollectionTime(System.currentTimeMillis());
-        collector.add(primaryController.getDatabaseSelected().getDataStructure().getTemperatureColumnName(), temperature);
+        collector.add(PRIMARY_CONTROLLER.getDatabaseSelected().getDataStructure().getTemperatureColumnName(), temperature);
         this.dataCollectorUsed.add(collector);
     }
 

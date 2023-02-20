@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe Database, utilizzata per gestire un singolo Database connesso al proprio {@link Driver}.
@@ -319,7 +319,7 @@ public class Database implements DatabaseElement {
             Connection conn = DriverManager.getConnection(this.DATABASE_URL, this.driver.getUSER(), this.driver.getPASS());
             this.statement = conn.createStatement();
         } catch (SQLException e) {
-            primaryController.getLogger().write(e.getMessage());
+            PRIMARY_CONTROLLER.getLogger().write(e.getMessage());
         }
     }
 
@@ -359,15 +359,15 @@ public class Database implements DatabaseElement {
      */
     public void insert() {
         this.checkStatement();
-        DataCollector last_collector = primaryController.getSerialSelected().getDataCollectorList().getLastDataCollector();
+        DataCollector last_collector = PRIMARY_CONTROLLER.getSerialSelected().getDataCollectorList().getLastDataCollector();
         String query = "INSERT INTO " + this.databaseStructure.getTableName() + this.databaseStructure.getTuple_ValuesName() + " VALUES (" +
                 "'" + last_collector.getCollectionDateTime() + "', " + last_collector.getData(this.databaseStructure.getTemperatureColumnName()) + ");";
 //        System.out.println(query);
         try {
             this.statement.executeUpdate(query);
         } catch (SQLException e) {
-            primaryController.getLogger().writeWithTime("Errore durante l'inserimento dei dati raccolti nel Database");
-            primaryController.getLogger().write(e.getMessage());
+            PRIMARY_CONTROLLER.getLogger().writeWithTime("Errore durante l'inserimento dei dati raccolti nel Database");
+            PRIMARY_CONTROLLER.getLogger().write(e.getMessage());
         }
     }
 

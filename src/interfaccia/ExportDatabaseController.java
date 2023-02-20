@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 
 /**
@@ -97,7 +97,7 @@ public class ExportDatabaseController extends DefaultController {
             else
                 warning_error = "Attenzione!\nNon è stato possibile trovare " + this.exportManager.getTarget();
             this.createWarningDialogWindowToGoBack("Problema durante l'esportazione", warning_error, new WindowSize(375, 125));
-            primaryController.getLogger().writeWithTime(warning_error);
+            PRIMARY_CONTROLLER.getLogger().writeWithTime(warning_error);
         }
     }
 
@@ -145,13 +145,13 @@ public class ExportDatabaseController extends DefaultController {
             if (this.typeOfExport.getSelectedToggle() == this.exportAllDatabaseRadio) {
                 if (this.exportManager.exportAllDatabase(file.getAbsolutePath())) {
                     this.exit();
-                    primaryController.getLogger().writeWithTime("Esportazione completata...");
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime("Esportazione completata...");
                     return;
                 }
             } else {
                 if (this.exportManager.exportOnlyData(file.getAbsolutePath())) {
                     this.exit();
-                    primaryController.getLogger().writeWithTime("Esportazione completata...");
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime("Esportazione completata...");
                     return;
                 }
             }
@@ -163,7 +163,7 @@ public class ExportDatabaseController extends DefaultController {
             controller.leaveOnlyProceedButton();
             controller.setWarningLabel("Attenzione!\nNon è stato possibile completare l'operazione di esportazione");
             controller.setProceedButtonAction(action);
-            primaryController.getLogger().write("Esportazione fallita...");
+            PRIMARY_CONTROLLER.getLogger().write("Esportazione fallita...");
         }
 
     }

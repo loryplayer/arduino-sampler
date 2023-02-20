@@ -14,7 +14,7 @@ import javafx.util.Callback;
 
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe ExportDatabaseController, utilizzata per gestire le operazioni d'importazione dei {@link Database} tramite interfaccia grafica.
@@ -52,7 +52,7 @@ public class ImportDatabaseFromDriverController extends DefaultController {
     private Button removeButton;
 
     /**
-     * Variabile {@link Button}, identifica il bottone per aggiungere i {@link Database}, contenuti all'interno del {@link #databasesSelectedList}, al {@link IndexController#primaryController}
+     * Variabile {@link Button}, identifica il bottone per aggiungere i {@link Database}, contenuti all'interno del {@link #databasesSelectedList}, al {@link IndexController#PRIMARY_CONTROLLER}
      */
     @FXML
     private Button doneButton;
@@ -90,13 +90,13 @@ public class ImportDatabaseFromDriverController extends DefaultController {
     }
 
     /**
-     * Metodo utilizzato aggiungere i {@link Database} selezionati all'interno del {@link IndexController#primaryController}.
+     * Metodo utilizzato aggiungere i {@link Database} selezionati all'interno del {@link IndexController#PRIMARY_CONTROLLER}.
      *
      * @param event evento catturato dal bottone
      */
     @FXML
     public void done(ActionEvent event) {
-        primaryController.addDatabaseFromAnotherDatabaseList(this.databasesSelectedList);
+        PRIMARY_CONTROLLER.addDatabaseFromAnotherDatabaseList(this.databasesSelectedList);
         this.exit();
     }
 
@@ -143,7 +143,7 @@ public class ImportDatabaseFromDriverController extends DefaultController {
                 this.removeButton.setDisable(true);
                 return;
             }
-            this.addButton.setDisable(primaryController.getDatabasesUsed().has(database_selected));
+            this.addButton.setDisable(PRIMARY_CONTROLLER.getDatabasesUsed().has(database_selected));
             if (this.databasesSelectedList.has(database_selected)) {
                 this.addButton.setDisable(true);
                 this.removeButton.setDisable(false);
@@ -221,7 +221,7 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
          *
          * <ul style="margin-top:0px">
          *     <li>
-         *         se il {@link Database} è già contenuto all'interno del {@link IndexController#primaryController}, il colore dello sfondo sarà rosso.
+         *         se il {@link Database} è già contenuto all'interno del {@link IndexController#PRIMARY_CONTROLLER}, il colore dello sfondo sarà rosso.
          *     </li>
          *     <li>
          *         se il {@link Database} è gia contenuto all'interno del {@link #database_selected}, il colore dello sfondo sarà verde.
@@ -236,7 +236,7 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
             super.updateItem(db, empty);
             if (db != null) {
                 setText(db.getName());
-                if (primaryController.getDatabasesUsed().has(db)) {
+                if (PRIMARY_CONTROLLER.getDatabasesUsed().has(db)) {
                     this.setStyle("-fx-background: rgba(255,0,0,0.67)");
                     return;
                 }

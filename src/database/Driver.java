@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe Driver, questa classe serve per interconnettersi con un sistema di gestione dei database, come in questo caso MySql.
@@ -274,7 +274,7 @@ public class Driver implements DatabaseElement {
             Connection conn = DriverManager.getConnection(this.JDBC_URL, this.USER, this.PASS);
             this.statement = conn.createStatement();
         } catch (SQLException e) {
-            primaryController.getLogger().write(e.getMessage());
+            PRIMARY_CONTROLLER.getLogger().write(e.getMessage());
         }
     }
 

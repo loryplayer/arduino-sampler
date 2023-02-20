@@ -12,7 +12,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe DatabaseManagerController, utilizzata per gestire le operazioni dei {@link Database} tramite interfaccia grafica.
@@ -131,7 +131,7 @@ public class DatabaseManagerController extends DefaultController {
      */
     @FXML
     public void removeDatabase(ActionEvent event) {
-        primaryController.removeDatabase(this.databaseTableView.getSelectionModel().getSelectedItem());
+        PRIMARY_CONTROLLER.removeDatabase(this.databaseTableView.getSelectionModel().getSelectedItem());
         this.Update();
     }
 
@@ -149,7 +149,7 @@ public class DatabaseManagerController extends DefaultController {
         EventHandler<ActionEvent> action = actionEvent -> {
             Database database = databaseTableView.getSelectionModel().getSelectedItem();
             if (database.delete()) {
-                primaryController.removeDatabase(database);
+                PRIMARY_CONTROLLER.removeDatabase(database);
                 Update();
                 controller.exit();
             }
@@ -160,11 +160,11 @@ public class DatabaseManagerController extends DefaultController {
 
 
     /**
-     * Metodo utilizzato per ricaricare la {@link #databaseTableView} con i dati riguardanti i {@link Database} utilizzati dal {@link IndexController#primaryController}
+     * Metodo utilizzato per ricaricare la {@link #databaseTableView} con i dati riguardanti i {@link Database} utilizzati dal {@link IndexController#PRIMARY_CONTROLLER}
      */
     private void refreshDatabaseList() {
         final ObservableList<Database> data = FXCollections.observableArrayList(
-                primaryController.getDatabasesUsed().getDatabases()
+                PRIMARY_CONTROLLER.getDatabasesUsed().getDatabases()
         );
         databaseTableView.setItems(data);
     }

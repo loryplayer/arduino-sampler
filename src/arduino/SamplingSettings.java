@@ -28,7 +28,7 @@ public class SamplingSettings {
 
     /**
      * <p>
-     * Variabile float utilizzata per trasformare i millisecondi nell'unità di misura più appropriata per una semplice lettura all'interno del grafico del {@link interfaccia.IndexController#primaryController}.
+     * Variabile float utilizzata per trasformare i millisecondi nell'unità di misura più appropriata per una semplice lettura all'interno del grafico del {@link interfaccia.IndexController#PRIMARY_CONTROLLER}.
      * </p>
      */
     private float multiplier = 1;

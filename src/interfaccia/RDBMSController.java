@@ -15,7 +15,7 @@ import javafx.util.Callback;
 import java.io.File;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe RDBMSController, utilizzata per gestire i {@link Driver} e creare {@link Database}.
@@ -158,13 +158,13 @@ public class RDBMSController extends DefaultController {
 //                        System.out.println(db.getName());
 //                        System.out.println(new File(this.MySql_TEMPLATE_path).getAbsolutePath());
                         db.buildDataStructure();
-                        primaryController.addDatabase(db);
+                        PRIMARY_CONTROLLER.addDatabase(db);
                         this.exit();
                         return;
                     } else {
                         warning_error = "Attenzione!\nNon è stato possibile realizzare il database";
                         size = new WindowSize(300, 100);
-                        primaryController.getLogger().write(warning_error);
+                        PRIMARY_CONTROLLER.getLogger().write(warning_error);
                     }
                 } else {
                     if (Objects.equals(import_manager.getImExStatus(), ImExManager.IMP_EXP_DISABLED)) {
@@ -175,7 +175,7 @@ public class RDBMSController extends DefaultController {
                         warning_error = "Attenzione!\nNon è stato possibile trovare " + import_manager.getTarget();
                         size = new WindowSize(300, 100);
                     }
-                    primaryController.getLogger().writeWithTime(warning_error);
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime(warning_error);
                 }
                 this.createWarningDialogWindowToGoBack("Problema durante l'importazione", warning_error, size);
 
@@ -190,18 +190,18 @@ public class RDBMSController extends DefaultController {
 
 
     /**
-     * Metodo utilizzato per rimuovere il {@link Driver} da {@link IndexController#primaryController}
+     * Metodo utilizzato per rimuovere il {@link Driver} da {@link IndexController#PRIMARY_CONTROLLER}
      *
      * @param event evento catturato dal bottone
      */
     @FXML
     public void removeDriver(ActionEvent event) {
         Driver driver_selected = driverTableView.getSelectionModel().getSelectedItem();
-        if (primaryController.getDatabasesUsed().getDatabasesByJDBC_URL(driver_selected.getJDBC_URL()).getDatabases().length > 0) {
+        if (PRIMARY_CONTROLLER.getDatabasesUsed().getDatabasesByJDBC_URL(driver_selected.getJDBC_URL()).getDatabases().length > 0) {
             DialogController controller = (DialogController) this.createNewWindowWithPriority("Eliminazione sistema di gestione", "dialog.fxml", new WindowSize(300, 100));
             EventHandler<ActionEvent> action = actionEvent -> {
-                primaryController.removeDriver(driver_selected);
-                primaryController.removeDatabasesFromJDBCURL(driver_selected.getJDBC_URL());
+                PRIMARY_CONTROLLER.removeDriver(driver_selected);
+                PRIMARY_CONTROLLER.removeDatabasesFromJDBCURL(driver_selected.getJDBC_URL());
                 this.Update();
                 this.disableObjs();
                 controller.exit();
@@ -209,8 +209,8 @@ public class RDBMSController extends DefaultController {
             controller.setWarningLabel("Attenzione!\nEliminando questo sistema di gestione\nrimuoverai anche i database associati!");
             controller.setProceedButtonAction(action);
         } else {
-            primaryController.removeDriver(driver_selected);
-            primaryController.removeDatabasesFromJDBCURL(driver_selected.getJDBC_URL());
+            PRIMARY_CONTROLLER.removeDriver(driver_selected);
+            PRIMARY_CONTROLLER.removeDatabasesFromJDBCURL(driver_selected.getJDBC_URL());
             this.Update();
             this.disableObjs();
         }
@@ -247,7 +247,7 @@ public class RDBMSController extends DefaultController {
      */
     public void refreshDriverTable() {
         final ObservableList<Driver> data = FXCollections.observableArrayList(
-                primaryController.getDriversUsed().getDriverConnections()
+                PRIMARY_CONTROLLER.getDriversUsed().getDriverConnections()
         );
         driverTableView.getItems().clear();
         driverTableView.refresh();

@@ -1,6 +1,6 @@
 package arduino;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 
 /**
@@ -139,7 +139,7 @@ public class Collector {
      */
     public boolean add_data(int data) { // add_data è in un loop while. data assume valori: {"[", byte, byte, byte, byte, "]"}
         if (data == this.DataDelimiterOpen && is_collecting) {
-            primaryController.getLogger().write("Attenzione, è gia stata avviato un processo d'immagazzinamento dati");
+            PRIMARY_CONTROLLER.getLogger().write("Attenzione, è gia stata avviato un processo d'immagazzinamento dati");
             return false;
         }
         // è gia stata avviato il processo d'immagazzinamento dati
@@ -161,7 +161,7 @@ public class Collector {
             this.index++;
             return true;
         }
-        primaryController.getLogger().write("Attenzione, errore durante la raccolta dati");
+        PRIMARY_CONTROLLER.getLogger().write("Attenzione, errore durante la raccolta dati");
         return false;
         // viene caricato il dato sotto forma di byte e restituito true per indicare che non sono sorte complicanze
     }

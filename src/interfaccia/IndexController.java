@@ -121,7 +121,7 @@ public class IndexController {
      * <p>Viene richiamata ogni qual'volta si debbano modificare eventuali variabili all'interno della Classe {@link IndexController}.</p>
      */
 
-    public static IndexController primaryController;
+    public static IndexController PRIMARY_CONTROLLER;
 
     /**
      * Variabile {@link DatabaseList}, utilizzata per memorizzare i {@link Database} utilizzabili.
@@ -265,7 +265,7 @@ public class IndexController {
      * Metodo richiamato alla creazione del Controller, si occupa d'inizializzare:
      * <ul style="margin-top:0px">
      *     <li>
-     *         {@link #primaryController}
+     *         {@link #PRIMARY_CONTROLLER}
      *     </li>
      *     <li>
      *         {@link #databasesUsed}
@@ -299,7 +299,7 @@ public class IndexController {
      * @see #setDatabaseSelectorFactory()
      */
     public void initialize() {
-        primaryController = this;
+        PRIMARY_CONTROLLER = this;
         this.databasesUsed = new DatabaseList();
         this.driversUsed = new DriverList();
         this.serialUsed = new SerialList();
@@ -307,7 +307,6 @@ public class IndexController {
         this.logger = new Logger(this.consoleArea);
         this.chartFeature = new ChartFeature(900, 10, 50, 2);
         this.setDatabaseSelectorFactory();
-		// TODO: if (primaryController != null) -> primaryController = this else this.exit()
     }
 
     /**

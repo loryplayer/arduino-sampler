@@ -9,10 +9,10 @@ import database.Database;
 
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
- * Classe AddDriverController, utilizzata per aggiungere i {@link Driver} all' {@link IndexController#primaryController}.
+ * Classe AddDriverController, utilizzata per aggiungere i {@link Driver} all' {@link IndexController#PRIMARY_CONTROLLER}.
  * <p>Estende {@link DefaultController}</p>
  * <p>Metodi principali:</p>
  * <ul style="margin-top: 0px">
@@ -161,7 +161,7 @@ public class AddDriverController extends DefaultController {
             ErrorLabel.setVisible(true);
         } else {
             // se il test da esito positivo verifico che non sia presente un RDBMS simile
-            for (Driver driver_ : primaryController.getDriversUsed().getDriverConnections()) {
+            for (Driver driver_ : PRIMARY_CONTROLLER.getDriversUsed().getDriverConnections()) {
                 if (Objects.equals(driver_.getRDBMS_NAME(), RDBMS_NAME)) {
                     ErrorLabel.setText(sameRdbmsNameError);
                     ErrorLabel.setVisible(true);
@@ -173,7 +173,7 @@ public class AddDriverController extends DefaultController {
                 }
             }
             // una volta verificato il tutto aggiungo il driver alla lista
-            primaryController.addDriver(driver);
+            PRIMARY_CONTROLLER.addDriver(driver);
             this.exit();
         }
     }

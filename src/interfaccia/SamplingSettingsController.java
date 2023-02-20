@@ -9,7 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe SamplingSettingsController, utilizzata per gestire le velocità di campionamento.
@@ -71,10 +71,10 @@ public class SamplingSettingsController extends DefaultController {
         try {
             float value = Float.parseFloat(raw_value);
             if (typeOfSampling.getSelectedToggle() == frequencyRadio)
-                primaryController.getSerialSelected().getSamplingSettings().setFrequency(value);
+                PRIMARY_CONTROLLER.getSerialSelected().getSamplingSettings().setFrequency(value);
             else
-                primaryController.getSerialSelected().getSamplingSettings().setPeriod(value);
-            primaryController.refreshSamplingIndicator();
+                PRIMARY_CONTROLLER.getSerialSelected().getSamplingSettings().setPeriod(value);
+            PRIMARY_CONTROLLER.refreshSamplingIndicator();
             this.exit();
         } catch (NumberFormatException e) {
             errorLabel.setVisible(true);

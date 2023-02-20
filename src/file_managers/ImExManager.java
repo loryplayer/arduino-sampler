@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe ImExManager, utilizzata per le operazioni d'importazione ed esportazione dei database.
@@ -300,12 +300,12 @@ public class ImExManager {
             String se;
             while ((se = stdError.readLine()) != null)
                 if (se.toLowerCase().contains("error")) {
-                    primaryController.getLogger().writeWithTime(se);
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime(se);
                     return false;
                 }
             return true;
         } catch (IOException e) {
-            primaryController.getLogger().writeWithTime(e.getMessage());
+            PRIMARY_CONTROLLER.getLogger().writeWithTime(e.getMessage());
             return false;
         }
     }
@@ -436,11 +436,11 @@ public class ImExManager {
         File output_dir = Paths.get(location, this.database.getName()).toFile();
         // vengono inizializzate le varie cartelle
         if (!output_dir.mkdirs()) {
-            primaryController.getLogger().write(String.format("Esista già una cartella denominata '%s' nel percorso '%s'", output_dir.getName(), output_dir.getAbsolutePath()));
+            PRIMARY_CONTROLLER.getLogger().write(String.format("Esista già una cartella denominata '%s' nel percorso '%s'", output_dir.getName(), output_dir.getAbsolutePath()));
             return false;
         }
         if (!output_temp_dir.mkdirs()) {
-            primaryController.getLogger().write(String.format("Esista già una cartella temporanea denominata '%s' nel percorso '%s'", output_temp_dir.getName(), output_temp_dir.getAbsolutePath()));
+            PRIMARY_CONTROLLER.getLogger().write(String.format("Esista già una cartella temporanea denominata '%s' nel percorso '%s'", output_temp_dir.getName(), output_temp_dir.getAbsolutePath()));
             return false;
         }
         // vengono create le varie cartelle, se almeno una delle due cartelle non viene generata restituisce [false]
@@ -455,7 +455,7 @@ public class ImExManager {
                 "--fields-enclosed-by=\""
         };
         if (!this.execute(cmd)) {
-            primaryController.getLogger().write(String.format("Si sono verificati degli errori durante l'esecuzione del comando '%s'", Arrays.toString(cmd)));
+            PRIMARY_CONTROLLER.getLogger().write(String.format("Si sono verificati degli errori durante l'esecuzione del comando '%s'", Arrays.toString(cmd)));
             return false;
         }
         // viene eseguita l'esportazione, se fallisce restituisce [false]
@@ -470,7 +470,7 @@ public class ImExManager {
         // vengono spostati i vari file con all'interno i dati, vengono successivamente cancellati i file temporanei
         error = output_temp_dir.delete();
         if (error)
-            primaryController.getLogger().write("Non è stato completato lo spostamento dei file .csv");
+            PRIMARY_CONTROLLER.getLogger().write("Non è stato completato lo spostamento dei file .csv");
         return error;
         // viene infine cancellata la cartella temporanea, se non è possibile farlo viene restituito [false]
     }

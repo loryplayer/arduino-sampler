@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * <p>Classe TimerController, utilizzata per effettuare i campionamenti.</p>
@@ -34,8 +34,8 @@ public class TimerController {
     public void start() {
         this.timer = new Timer();
         Controller timerController = new Controller();
-        timer.schedule(timerController, 0, (long) primaryController.getSerialSelected().getSamplingSettings().getPeriod_ms());
-        primaryController.getLogger().writeWithTime("Campionamento avviato...");
+        timer.schedule(timerController, 0, (long) PRIMARY_CONTROLLER.getSerialSelected().getSamplingSettings().getPeriod_ms());
+        PRIMARY_CONTROLLER.getLogger().writeWithTime("Campionamento avviato...");
     }
 
     /**
@@ -44,8 +44,8 @@ public class TimerController {
     public void stop() {
         if (this.timer != null) {
             this.timer.cancel();
-            primaryController.getLogger().write(String.format("Numero campionamenti effettuati: %d", primaryController.getSerialSelected().getDataCollectorCount()));
-            primaryController.getLogger().writeWithTime("Campionamento fermato...");
+            PRIMARY_CONTROLLER.getLogger().write(String.format("Numero campionamenti effettuati: %d", PRIMARY_CONTROLLER.getSerialSelected().getDataCollectorCount()));
+            PRIMARY_CONTROLLER.getLogger().writeWithTime("Campionamento fermato...");
         }
     }
 
@@ -73,8 +73,8 @@ class Controller extends TimerTask {
     @Override
     public void run() {
         Platform.runLater(() -> {
-            primaryController.getSerialSelected().read_and_collect();
-            primaryController.refreshChart();
+            PRIMARY_CONTROLLER.getSerialSelected().read_and_collect();
+            PRIMARY_CONTROLLER.refreshChart();
         });
     }
 }

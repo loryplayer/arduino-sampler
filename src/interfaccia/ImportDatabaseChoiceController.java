@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe ImportDatabaseChoiceController, utilizzata per gestire la scelta d'esportazione dei {@link Database} tramite interfaccia grafica.
@@ -137,7 +137,7 @@ public class ImportDatabaseChoiceController extends RDBMSController {
                         return;
                     else {
                         warning_error = "Non è stato possibile importare il database";
-                        primaryController.getLogger().write(warning_error);
+                        PRIMARY_CONTROLLER.getLogger().write(warning_error);
                     }
 
                 } else {
@@ -146,7 +146,7 @@ public class ImportDatabaseChoiceController extends RDBMSController {
                                 "\nsi consiglia di controllare la variabile secure_file_priv nel file my.ini";
                     else
                         warning_error = "Attenzione!\nNon è stato possibile trovare " + importManager.getTarget();
-                    primaryController.getLogger().writeWithTime(warning_error);
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime(warning_error);
                 }
                 this.createWarningDialogWindowToGoBack("Problema durante l'esportazione", warning_error, new WindowSize(375, 125));
             }

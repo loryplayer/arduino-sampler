@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * Classe DefaultController, utilizzato come Controller Generico.
@@ -301,7 +301,7 @@ class WindowBuilder {
             this.stage.initModality(Modality.WINDOW_MODAL);
             return this;
         } catch (IOException e) {
-            primaryController.getLogger().write(e.getMessage());
+            PRIMARY_CONTROLLER.getLogger().write(e.getMessage());
             throw new RuntimeException(e);
         }
     }

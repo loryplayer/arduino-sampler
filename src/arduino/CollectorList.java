@@ -1,6 +1,6 @@
 package arduino;
 
-import static interfaccia.IndexController.primaryController;
+import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
  * <p>Classe CollectorList, utilizzata per gestire l'insieme delle classi {@link Collector}.</p>
@@ -45,7 +45,7 @@ public class CollectorList {
             new_collectors[no_collectors] = collector;
             this.collectors = new_collectors;
         }else
-            primaryController.getLogger().write(String.format("L'oggetto, con identificativo '%s', per raccolta dati è già stato aggiunto", collector.getIdentifier()));
+            PRIMARY_CONTROLLER.getLogger().write(String.format("L'oggetto, con identificativo '%s', per raccolta dati è già stato aggiunto", collector.getIdentifier()));
     }
 
     /**
