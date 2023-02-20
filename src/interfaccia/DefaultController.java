@@ -109,17 +109,16 @@ public class DefaultController {
         window_builder.show();
         return window_builder.getController();
     }
-
     /**
      * Metodo utilizzato per realizzare una finestra di dialogo che avvisi di eventuali errori insorti.
      *
      * @param title         stringa contenente la tipologia d'errore
      * @param warning_error stringa contente l'errore
+     * @param size          variabile WindowSize contenente le dimensioni della finestra
      * @see WindowBuilder
      * @see WindowSize
      */
-    void createWarningDialogWindow(String title, String warning_error) {
-        WindowSize size = new WindowSize(300, 75);
+    public void createWarningDialogWindow(String title, String warning_error, WindowSize size) {
         DialogController controller = (DialogController) this.createNewWindowWithPriority(title, "dialog.fxml", size);
         EventHandler<ActionEvent> action = actionEvent -> {
             controller.exit();
@@ -137,6 +136,19 @@ public class DefaultController {
 
     /**
      * Metodo utilizzato per realizzare una finestra di dialogo che avvisi di eventuali errori insorti.
+     *
+     * @param title         stringa contenente la tipologia d'errore
+     * @param warning_error stringa contente l'errore
+     * @see WindowBuilder
+     * @see WindowSize
+     */
+    public void createWarningDialogWindow(String title, String warning_error) {
+        WindowSize size = new WindowSize(300, 75);
+        this.createWarningDialogWindow(title, warning_error, size);
+    }
+
+    /**
+     * Metodo utilizzato per realizzare una finestra di dialogo che avvisi di eventuali errori insorti.
      * <p>
      * La finestra presenterà un bottone che se cliccato terminerà non solo la finestra di dialogo ma anche quella precedente.
      * </p>
@@ -146,7 +158,7 @@ public class DefaultController {
      * @see WindowBuilder
      * @see WindowSize
      */
-    void createWarningDialogWindowToGoBack(String title, String warning_error, WindowSize size) {
+    public void createWarningDialogWindowToGoBack(String title, String warning_error, WindowSize size) {
         DialogController controller = (DialogController) this.createNewWindowWithPriority(title, "dialog.fxml", size);
         EventHandler<ActionEvent> action = actionEvent -> {
             controller.exit();
@@ -168,7 +180,7 @@ public class DefaultController {
     /**
      * Metodo utilizzato per chiudere la finestra corrente e ritornare quindi allo stage precedente.
      */
-    void exit() {
+    public void exit() {
         this.stage.close();
     }
 
@@ -188,7 +200,7 @@ public class DefaultController {
      * @param event L'evento catturato dal bottone
      */
     @FXML
-    void goBack(ActionEvent event) {
+    public void goBack(ActionEvent event) {
         this.exit();
     }
 }
