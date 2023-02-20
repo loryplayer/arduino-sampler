@@ -120,11 +120,6 @@ public class AddDriverController extends DefaultController {
     @FXML
     private TextField PasswordTextfield;
 
-    /**
-     * Variabile {@link Label} su cui vengono scritti gli eventuali errori che insorgono.
-     */
-    @FXML
-    private Label ErrorLabel;
 
 
     /*
@@ -157,18 +152,15 @@ public class AddDriverController extends DefaultController {
 
         // viene verificato il funzionamento della connessione tramite un test
         if (!driver.testConnection()) {
-            ErrorLabel.setText(connectionError);
-            ErrorLabel.setVisible(true);
+            this.createWarningDialogWindow("Errore", connectionError, new WindowSize(300, 85));
         } else {
             // se il test da esito positivo verifico che non sia presente un RDBMS simile
             for (Driver driver_ : PRIMARY_CONTROLLER.getDriversUsed().getDriverConnections()) {
                 if (Objects.equals(driver_.getRDBMS_NAME(), RDBMS_NAME)) {
-                    ErrorLabel.setText(sameRdbmsNameError);
-                    ErrorLabel.setVisible(true);
+                    this.createWarningDialogWindow("Errore", sameRdbmsNameError, new WindowSize(300, 85));
                     return;
                 } else if (Objects.equals(driver_.getJDBC_URL(), driver.getJDBC_URL())) {
-                    ErrorLabel.setText(sameJDBCurlError);
-                    ErrorLabel.setVisible(true);
+                    this.createWarningDialogWindow("Errore", sameJDBCurlError, new WindowSize(300, 85));
                     return;
                 }
             }
