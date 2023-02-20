@@ -132,10 +132,6 @@ public class RDBMSController extends DefaultController {
      */
     @FXML
     public void openDriverAdderInterface(ActionEvent event) {
-        this.databaseLabel.setDisable(true);
-        this.databaseNameField.setDisable(true);
-        this.nextButton.setDisable(true);
-        this.removeDriverButton.setDisable(true);
         this.createNewWindowWithPriority("Imposta credenziali", "addRDBMS_manager_interface.fxml", new WindowSize(500, 350));
     }
 
