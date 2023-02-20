@@ -299,7 +299,10 @@ public class IndexController {
      * @see #setDatabaseSelectorFactory()
      */
     public void initialize() {
-        PRIMARY_CONTROLLER = this;
+        if (PRIMARY_CONTROLLER == null)
+            PRIMARY_CONTROLLER = this;
+        else
+            System.exit(1);
         this.databasesUsed = new DatabaseList();
         this.driversUsed = new DriverList();
         this.serialUsed = new SerialList();
