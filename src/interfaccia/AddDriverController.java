@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import database.Database;
+import javafx.stage.Stage;
 
 import java.util.Objects;
 
@@ -181,5 +182,15 @@ public class AddDriverController extends DefaultController {
         this.PasswordTextfield.setPromptText(this.passwordPlaceholder);
     }
 
+    /**
+     * Metodo utilizzato per impostare lo Stage passato come parametro a questo controller.
+     * Imposta anche i valori minimi di dimensione per questa finestra.
+     *
+     * @param stage nuovo Stage
+     */
+    public void setStage(Stage stage) {
+        super.setStage(stage);
+        this.setMinSize(new WindowSize(465, 380));
+    }
 
 }
