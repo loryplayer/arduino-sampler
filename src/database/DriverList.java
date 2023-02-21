@@ -60,11 +60,11 @@ public class DriverList implements ListHandler {
      */
     public void add(DatabaseElement element) {
         Driver driver = (Driver) element;
-        int no_drivers = drivers.length;
-        Driver[] new_drivers = new Driver[no_drivers + 1];
-        System.arraycopy(drivers, 0, new_drivers, 0, no_drivers);
-        new_drivers[no_drivers] = driver;
-        this.drivers = new_drivers;
+        int noDrivers = drivers.length;
+        Driver[] newDrivers = new Driver[noDrivers + 1];
+        System.arraycopy(drivers, 0, newDrivers, 0, noDrivers);
+        newDrivers[noDrivers] = driver;
+        this.drivers = newDrivers;
     }
 
     /**
@@ -87,26 +87,26 @@ public class DriverList implements ListHandler {
         Driver driver = (Driver) element;
         if (this.drivers.length == 0)
             return;
-        Driver[] new_drivers = new Driver[this.drivers.length];
+        Driver[] newDrivers = new Driver[this.drivers.length];
         int counter = 0;
-        for (Driver current_driver : this.drivers) {
-            if (!Objects.equals(current_driver.getJDBC_URL(), driver.getJDBC_URL())) {
-                new_drivers[counter] = current_driver;
+        for (Driver currentDriver : this.drivers) {
+            if (currentDriver.equals(driver)) {
+                newDrivers[counter] = currentDriver;
                 counter++;
             }
         }
-        Driver[] new_collectors_resized = new Driver[counter];
-        System.arraycopy(new_drivers, 0, new_collectors_resized, 0, counter);
-        this.drivers = new_collectors_resized;
+        Driver[] newDriversResized = new Driver[counter];
+        System.arraycopy(newDrivers, 0, newDriversResized, 0, counter);
+        this.drivers = newDriversResized;
     }
 
     /**
      * Metodo utilizzato per impostare il {@link DataArchiver} al {@link Driver}.
      *
-     * @param driver_archiver {@link DataArchiver} da utilizzare
+     * @param driverArchiver {@link DataArchiver} da utilizzare
      */
-    public void setDataArchiver(DataArchiver driver_archiver) {
-        this.dataArchiver = driver_archiver;
+    public void setDataArchiver(DataArchiver driverArchiver) {
+        this.dataArchiver = driverArchiver;
     }
 
     /**
@@ -131,7 +131,7 @@ public class DriverList implements ListHandler {
     /**
      * Metodo utilizzato per interrompere tutte le comunicazioni di ogni {@link Driver} con il relativo sistema di gestione dei database relazionali.
      */
-    public void close_all_connections() {
+    public void closeAllConnections() {
         for (Driver driver : this.drivers) {
             driver.closeConnection();
         }
