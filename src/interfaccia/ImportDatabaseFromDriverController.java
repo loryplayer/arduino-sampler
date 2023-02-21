@@ -154,8 +154,8 @@ public class ImportDatabaseFromDriverController extends DefaultController {
 
         // viene impostato il funzionamento delle varie celle
         CallBack callBack = new CallBack();
-        callBack.setDatabase_selected(this.databasesSelectedList);
-        databaseListView.setCellFactory(callBack);
+        callBack.setDatabaseSelected(this.databasesSelectedList);
+        this.databaseListView.setCellFactory(callBack);
 
     }
 
@@ -176,7 +176,7 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
     /**
      * Variabile {@link DatabaseList} al cui interno sono contenuti i {@link Database} precedentemente selezionati nella Classe {@link ImportDatabaseFromDriverController}.
      */
-    private DatabaseList database_selected;
+    private DatabaseList databaseListSelected;
 
 
     /**
@@ -191,12 +191,12 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
     }
 
     /**
-     * Metodo utilizzato per inizializzare {@link #database_selected}.
+     * Metodo utilizzato per inizializzare {@link #databaseListSelected}.
      *
-     * @param database_selected {@link DatabaseList} utilizzato da {@link ImportDatabaseFromDriverController}
+     * @param databaseList {@link DatabaseList} utilizzato da {@link ImportDatabaseFromDriverController}
      */
-    public void setDatabase_selected(DatabaseList database_selected) {
-        this.database_selected = database_selected;
+    public void setDatabaseSelected(DatabaseList databaseList) {
+        this.databaseListSelected = databaseList;
     }
 
     /**
@@ -206,14 +206,6 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
      * </p>
      */
     class listCellDatabase extends ListCell<Database> {
-
-        /**
-         * Viene fatto eseguire il costruttore contenuto nel genitore {@link ListCell}.
-         */
-        public listCellDatabase() {
-            super();
-        }
-
         /**
          * Override del metodo {@link ListCell#updateItem(Object, boolean)}, esso richiamato ogni volta che è necessario aggiornare la cella.
          *
@@ -224,7 +216,7 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
          *         se il {@link Database} è già contenuto all'interno del {@link IndexController#PRIMARY_CONTROLLER}, il colore dello sfondo sarà rosso.
          *     </li>
          *     <li>
-         *         se il {@link Database} è gia contenuto all'interno del {@link #database_selected}, il colore dello sfondo sarà verde.
+         *         se il {@link Database} è gia contenuto all'interno del {@link #databaseListSelected}, il colore dello sfondo sarà verde.
          *     </li>
          * </ul>
          *
@@ -240,14 +232,10 @@ class CallBack implements Callback<ListView<Database>, ListCell<Database>> {
                     this.setStyle("-fx-background: rgba(255,0,0,0.67)");
                     return;
                 }
-                if (database_selected.getDatabases() == null)
-                    return;
-                for (Database database : database_selected.getDatabases()) {
-                    if (Objects.equals(database.getName(), db.getName())) {
-                        this.setStyle("-fx-background: rgba(0,255,0,0.40)");
-                        break;
-                    }
-                }
+                if (databaseListSelected.has(db))
+                    this.setStyle("-fx-background: rgba(0,255,0,0.40)");
+                else
+                    this.setStyle("");
             }
         }
     }
