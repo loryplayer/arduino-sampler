@@ -112,10 +112,10 @@ public class ImportDatabaseChoiceController extends RDBMSController {
     public void next(ActionEvent event) {
         this.selectedDriver = this.driverTableView.getSelectionModel().getSelectedItem();
         if (typeOfImport.getSelectedToggle() == importFromDriver) {
-            DefaultController new_windows_controller = this.createNewWindowForReplace("Seleziona tipologia di importazione", "import_database_manager.fxml", new WindowSize(450, 400));
+            DefaultController newWindowController = this.createNewWindowForReplace("Importazione da Driver", "import_database_manager.fxml", new WindowSize(450, 400));
 
             //Esegue un override sul metodo di richiamo al momento della chiusura della finestra facendo riferimento all'Update della finestra precedente che caricherà i database
-            new_windows_controller.stage.setOnHidden(e -> {
+            newWindowController.stage.setOnHidden(e -> {
                 if (this.previous_controller != null)
                     this.previous_controller.Update();
             });
@@ -131,24 +131,24 @@ public class ImportDatabaseChoiceController extends RDBMSController {
             if (file != null) {
                 ImExManager importManager = new ImExManager(selectedDriver);
                 importManager.setTarget("mysql.exe");
-                String warning_error;
+                String warningError;
                 if (importManager.find()) {
                     if (importManager.importFromFile(file.getAbsolutePath()))
                         return;
                     else {
-                        warning_error = "Non è stato possibile importare il database";
-                        PRIMARY_CONTROLLER.getLogger().write(warning_error);
+                        warningError = "Non è stato possibile importare il database";
+                        PRIMARY_CONTROLLER.getLogger().write(warningError);
                     }
 
                 } else {
                     if (Objects.equals(importManager.getImExStatus(), ImExManager.IMP_EXP_DISABLED))
-                        warning_error = "Attenzione!\nIl server è impostato per impedire le importazioni ed esportazioni," +
+                        warningError = "Attenzione!\nIl server è impostato per impedire le importazioni ed esportazioni," +
                                 "\nsi consiglia di controllare la variabile secure_file_priv nel file my.ini";
                     else
-                        warning_error = "Attenzione!\nNon è stato possibile trovare " + importManager.getTarget();
-                    PRIMARY_CONTROLLER.getLogger().writeWithTime(warning_error);
+                        warningError = "Attenzione!\nNon è stato possibile trovare " + importManager.getTarget();
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime(warningError);
                 }
-                this.createWarningDialogWindowToGoBack("Problema durante l'esportazione", warning_error, new WindowSize(375, 125));
+                this.createWarningDialogWindowToGoBack("Problema durante l'esportazione", warningError, new WindowSize(375, 125));
             }
         }
     }
@@ -205,9 +205,9 @@ public class ImportDatabaseChoiceController extends RDBMSController {
      * <p>Richiama infine il metodo {@link #setTableFactory()}</p>
      */
     public void initialize() {
-        this.driverTableView.getSelectionModel().selectedItemProperty().addListener(((observableValue, old_driverConnection, driverConnection_selected) ->
+        this.driverTableView.getSelectionModel().selectedItemProperty().addListener(((observableValue, oldDriverConnection, driverConnectionSelected) ->
         {
-            if (driverConnection_selected != null) { // condizione necessaria quando vengono eliminati tutti i driver
+            if (driverConnectionSelected != null) { // condizione necessaria quando vengono eliminati tutti i driver
                 if (observableValue.getValue().testConnection()) {
                     this.choiceLabel.setDisable(false);
                     this.importFromDriver.setDisable(false);
