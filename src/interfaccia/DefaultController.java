@@ -109,6 +109,7 @@ public class DefaultController {
         window_builder.show();
         return window_builder.getController();
     }
+
     /**
      * Metodo utilizzato per realizzare una finestra di dialogo che avvisi di eventuali errori insorti.
      *
@@ -182,6 +183,16 @@ public class DefaultController {
      */
     public void exit() {
         this.stage.close();
+    }
+
+    /**
+     * Metodo utilizzato per impostare la dimensione minima della finestra.
+     * @param minSize variabile {@link WindowSize} contenente la dimensione minima
+     */
+
+    public void setMinSize(WindowSize minSize) {
+        this.stage.setMinWidth(minSize.width());
+        this.stage.setMinHeight(minSize.height());
     }
 
 
