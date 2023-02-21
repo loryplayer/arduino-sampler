@@ -64,7 +64,7 @@ public class DatabaseList implements ListHandler {
     /**
      * Oggetto {@link DataArchiver}, utilizzato per effettuare il salvataggio del {@link Database}
      */
-    private DataArchiver database_archiver;
+    private DataArchiver databaseArchiver;
 
     /**
      * Metodo utilizzato per aggiungere {@link Database} all'array {@link #databases}.
@@ -73,11 +73,11 @@ public class DatabaseList implements ListHandler {
      */
     public void add(DatabaseElement element) {
         Database database = (Database) element;
-        int no_databases = this.databases.length;
-        Database[] new_drivers = new Database[no_databases + 1];
-        System.arraycopy(this.databases, 0, new_drivers, 0, no_databases);
-        new_drivers[no_databases] = database;
-        this.databases = new_drivers;
+        int noDatabases = this.databases.length;
+        Database[] newDatabases = new Database[noDatabases + 1];
+        System.arraycopy(this.databases, 0, newDatabases, 0, noDatabases);
+        newDatabases[noDatabases] = database;
+        this.databases = newDatabases;
     }
 
 
@@ -97,18 +97,18 @@ public class DatabaseList implements ListHandler {
      * @param element {@link Database}
      */
     public void remove(DatabaseElement element) {
-        Database database = (Database) element;
-        Database[] new_databases = new Database[this.databases.length];
+        Database databaseToRemove = (Database) element;
+        Database[] newDatabases = new Database[this.databases.length];
         int counter = 0;
-        for (Database current_database : this.databases) {
-            if (current_database != database) {
-                new_databases[counter] = current_database;
+        for (Database currentDatabase : this.databases) {
+            if (!currentDatabase.equals(databaseToRemove)) {
+                newDatabases[counter] = currentDatabase;
                 counter++;
             }
         }
-        Database[] new_databases_resized = new Database[counter];
-        System.arraycopy(new_databases, 0, new_databases_resized, 0, counter);
-        this.databases = new_databases_resized;
+        Database[] newDatabasesResized = new Database[counter];
+        System.arraycopy(newDatabases, 0, newDatabasesResized, 0, counter);
+        this.databases = newDatabasesResized;
     }
 
     /**
@@ -120,27 +120,27 @@ public class DatabaseList implements ListHandler {
     public void removeFromJDBC_URL(String JDBC_URL) {
         if (this.databases.length == 0)
             return;
-        Database[] new_databases = new Database[this.databases.length - this.getDatabasesByJDBC_URL(JDBC_URL).getDatabases().length];
+        Database[] newDatabases = new Database[this.databases.length - this.getDatabasesByJDBC_URL(JDBC_URL).getDatabases().length];
         int counter = 0;
-        for (Database current_database : this.databases) {
-            if (!Objects.equals(current_database.getJDBC_URL(), JDBC_URL)) {
-                new_databases[counter] = current_database;
+        for (Database currentDatabase : this.databases) {
+            if (!Objects.equals(currentDatabase.getJDBC_URL(), JDBC_URL)) {
+                newDatabases[counter] = currentDatabase;
                 counter++;
             }
         }
-        Database[] new_databases_resized = new Database[counter];
-        System.arraycopy(new_databases, 0, new_databases_resized, 0, counter);
-        this.databases = new_databases_resized;
+        Database[] newDatabasesResized = new Database[counter];
+        System.arraycopy(newDatabases, 0, newDatabasesResized, 0, counter);
+        this.databases = newDatabasesResized;
     }
 
 
     /**
      * Metodo utilizzato per impostare il {@link DataArchiver} al {@link Database}.
      *
-     * @param data_archiver {@link DataArchiver} da utilizzare
+     * @param dataArchiver {@link DataArchiver} da utilizzare
      */
-    public void setDataArchiver(DataArchiver data_archiver) {
-        this.database_archiver = data_archiver;
+    public void setDataArchiver(DataArchiver dataArchiver) {
+        this.databaseArchiver = dataArchiver;
     }
 
     /**
@@ -156,9 +156,9 @@ public class DatabaseList implements ListHandler {
      */
 
     public void save() {
-        this.database_archiver.overrideFile();
+        this.databaseArchiver.overrideFile();
         for (Database database : this.databases) {
-            this.database_archiver.save(database, true);
+            this.databaseArchiver.save(database, true);
         }
     }
 
@@ -209,8 +209,8 @@ public class DatabaseList implements ListHandler {
      * </ul>
      */
     public boolean has(Database database) {
-        for (Database current_database : this.databases)
-            if (Objects.equals(current_database.getName(), database.getName()) && Objects.equals(current_database.getJDBC_URL(), database.getJDBC_URL()))
+        for (Database currentDatabase : this.databases)
+            if (currentDatabase.equals(database))
                 return true;
         return false;
     }
@@ -231,11 +231,11 @@ public class DatabaseList implements ListHandler {
      */
 
     public Database[] getReachableDatabases() {
-        DatabaseList db_list = new DatabaseList();
+        DatabaseList dbList = new DatabaseList();
         for (Database database : this.databases)
             if (database.testConnection())
-                db_list.add(database);
-        return db_list.getDatabases();
+                dbList.add(database);
+        return dbList.getDatabases();
     }
 
     /**
@@ -282,11 +282,11 @@ public class DatabaseList implements ListHandler {
      * @see Driver#getRDBMS_NAME()
      */
     public DatabaseList getDatabasesByRDBMS(String RDBMS) {
-        DatabaseList db_list = new DatabaseList();
+        DatabaseList dbList = new DatabaseList();
         for (Database database : this.databases)
             if (Objects.equals(database.getDriver().getRDBMS_NAME(), RDBMS))
-                db_list.add(database);
-        return db_list;
+                dbList.add(database);
+        return dbList;
     }
 
     /**
@@ -297,11 +297,11 @@ public class DatabaseList implements ListHandler {
      * @see Driver#getJDBC_URL()
      */
     public DatabaseList getDatabasesByJDBC_URL(String driverJDBC_URL) {
-        DatabaseList db_list = new DatabaseList();
+        DatabaseList dbList = new DatabaseList();
         for (Database database : this.databases)
             if (Objects.equals(database.getDriver().getJDBC_URL(), driverJDBC_URL))
-                db_list.add(database);
-        return db_list;
+                dbList.add(database);
+        return dbList;
     }
 
     /**
@@ -310,8 +310,8 @@ public class DatabaseList implements ListHandler {
      * @see DataArchiver#getElementsSaved()
      */
     public void getDatabasesFromDataArchiver() {
-        this.database_archiver.loadData();
-        this.databases = ((DatabaseList) this.database_archiver.getElementsSaved()).getDatabases();
+        this.databaseArchiver.loadData();
+        this.databases = ((DatabaseList) this.databaseArchiver.getElementsSaved()).getDatabases();
     }
 
     /**
