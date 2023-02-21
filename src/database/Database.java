@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
@@ -142,14 +143,14 @@ public class Database implements DatabaseElement {
      *     </li>
      * </ul>
      *
-     * @param db_driver {@link Driver} da utilizzare per questo database
+     * @param dbDriver {@link Driver} da utilizzare per questo database
      * @param db_name   nome del database
      * @see #setName(String)
      * @see #setDriver(Driver)
      */
-    public Database(Driver db_driver, String db_name) {
+    public Database(Driver dbDriver, String db_name) {
         this.setName(db_name);
-        this.setDriver(db_driver);
+        this.setDriver(dbDriver);
     }
 
 
@@ -180,12 +181,33 @@ public class Database implements DatabaseElement {
     }
 
     /**
+     * Metodo per verificare l'uguaglianza con il database passato come parametro
+     * @param databaseToCompare {@link Database} da confrontare
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se entrambi i {@link Database} possiedono lo stesso {@link #DATABASE_URL}
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se i {@link Database} non possiedono lo stesso {@link #DATABASE_URL}
+     *     </li>
+     * </ul>
+     */
+    public boolean equals(Database databaseToCompare)
+    {
+        return Objects.equals(this.DATABASE_URL, databaseToCompare.getDATABASE_URL());
+    }
+
+    /**
      * Metodo utilizzato per impostare il nome al database
      *
-     * @param db_name Nome del database
+     * @param dbName Nome del database
      */
-    public void setName(String db_name) {
-        this.name = db_name;
+    public void setName(String dbName) {
+        this.name = dbName;
     }
 
     /**
@@ -208,11 +230,11 @@ public class Database implements DatabaseElement {
      *     </li>
      * </ul>
      *
-     * @param db_driver {@link Driver} da impostare per il database
+     * @param dbDriver {@link Driver} da impostare per il database
      */
-    public void setDriver(Driver db_driver) {
-        if (db_driver != null) { // se non viene trovato il driver tramite JDBC_URL
-            this.driver = db_driver;
+    public void setDriver(Driver dbDriver) {
+        if (dbDriver != null) { // se non viene trovato il driver tramite JDBC_URL
+            this.driver = dbDriver;
             this.JDBC_URL = this.driver.getJDBC_URL();
             this.RDBMS = this.driver.getRDBMS_NAME();
             this.DATABASE_URL = this.JDBC_URL + "/" + this.name;
