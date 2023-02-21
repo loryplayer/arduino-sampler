@@ -132,6 +132,7 @@ public class RDBMSController extends DefaultController {
      */
     @FXML
     public void openDriverAdderInterface(ActionEvent event) {
+        this.disableObjs();
         this.createNewWindowWithPriority("Imposta credenziali", "addRDBMS_manager_interface.fxml", new WindowSize(500, 350));
     }
 
@@ -240,7 +241,6 @@ public class RDBMSController extends DefaultController {
         this.nextButton.setDisable(true);
         this.removeDriverButton.setDisable(true);
     }
-
 
     /**
      * Metodo realizzato per aggiornare i valori contenuti in {@link #driverTableView}.
