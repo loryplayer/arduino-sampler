@@ -95,15 +95,15 @@ public class DatabaseStructure {
      * </h2>
      *
      * <p>Grazie alla seconda query, invece è invece possibile ottenere:</p>
-     *     <ul style="margin-top:0px">
-     *         <li>
-     *             Nome della variabile
-     *         </li>
-     *         <li>
-     *             Tipologia della variabile
-     *         </li>
-     *     </ul>
-     *     Dalle informazioni ottenute è possible verificare se la tabella selezionata presenta le caratteristiche per poter ospitare i dati che si intendono salvare (tempo, temperatura).
+     * <ul style="margin-top:0px">
+     *     <li>
+     *         Nome della variabile
+     *     </li>
+     *     <li>
+     *         Tipologia della variabile
+     *     </li>
+     * </ul>
+     * Dalle informazioni ottenute è possible verificare se la tabella selezionata presenta le caratteristiche per poter ospitare i dati che si intendono salvare (tempo, temperatura).
      *
      * @see #isSimilar(String, String)
      */
@@ -114,9 +114,12 @@ public class DatabaseStructure {
                 String table_name = tables.getString(1);
                 PreparedStatement prestmt_describe = this.database.getStatement().getConnection().prepareStatement("DESCRIBE " + this.database.getName() + "." + table_name + " ;");
                 ResultSet describe = prestmt_describe.executeQuery();
+                boolean tableUsable = false;
                 while (describe.next()) {
                     String field = describe.getString(1);
                     String type = describe.getString(2);
+                    if (Objects.equals(type, "int") && Objects.equals(describe.getString(4), "PRI") && Objects.equals(describe.getString(6), "auto_increment"))
+                        tableUsable = true;
                     if (Objects.equals(type, "float") || Objects.equals(type, "double")) {
                         for (String default_field : this.defaultTypeTemperatureNames) {
                             if (this.isSimilar(field, default_field)) {
@@ -130,6 +133,8 @@ public class DatabaseStructure {
                         this.tableName = table_name;
                     }
                 }
+                this.timeColumnName = (tableUsable) ? this.timeColumnName : null;
+                this.temperatureColumnName = (tableUsable) ? this.temperatureColumnName : null;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -332,10 +337,11 @@ public class DatabaseStructure {
     /**
      * Metodo utilizzato per ottenere i nomi relativi alle tabelle.
      * <p>viene utilizzato nel metodo {@link Database#insert()}.</p>
+     *
      * @return Stringa, struttura:
      * <code>({@link #timeColumnName}, {@link #temperatureColumnName}</code>
      */
     public String getTuple_ValuesName() {
-        return " (" + this.timeColumnName + ", " + this.temperatureColumnName +") ";
+        return " (" + this.timeColumnName + ", " + this.temperatureColumnName + ") ";
     }
 }
