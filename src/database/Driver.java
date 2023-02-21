@@ -6,6 +6,7 @@ import interfaces.DatabaseElement;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
@@ -196,6 +197,26 @@ public class Driver implements DatabaseElement {
         this.RDBMS_URL = mapInformation.get("RDBMS_URL");
         this.JDBC_URL = mapInformation.get("JDBC_URL");
         this.RDBMS_NAME = mapInformation.get("RDBMS_NAME");
+    }
+    /**
+     * Metodo per verificare l'uguaglianza con il driver passato come parametro
+     * @param driver_to_compare {@link Driver} da confrontare
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se entrambi i {@link Driver} possiedono lo stesso {@link #JDBC_URL}
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se i {@link Driver} non possiedono lo stesso {@link #JDBC_URL}
+     *     </li>
+     * </ul>
+     */
+    public boolean equals(Driver driver_to_compare)
+    {
+        return Objects.equals(this.JDBC_URL, driver_to_compare.getJDBC_URL());
     }
 
     /**
