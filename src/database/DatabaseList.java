@@ -233,7 +233,7 @@ public class DatabaseList implements ListHandler {
     public Database[] getReachableDatabases() {
         DatabaseList dbList = new DatabaseList();
         for (Database database : this.databases)
-            if (database.testConnection())
+            if (database.testConnection() && database.isUsable())
                 dbList.add(database);
         return dbList.getDatabases();
     }
