@@ -126,6 +126,11 @@ public class Database implements DatabaseElement {
     private Driver driver;
 
     /**
+     * Valore di tipo booleano che identifica se questa struttura dati è utilizzabile.
+     */
+    private boolean usable = false;
+
+    /**
      * <p>Costruttore della Classe {@link Database}.</p>
      * Si occupa di:
      * <ul style="margin-top:0">
@@ -144,7 +149,7 @@ public class Database implements DatabaseElement {
      * </ul>
      *
      * @param dbDriver {@link Driver} da utilizzare per questo database
-     * @param db_name   nome del database
+     * @param db_name  nome del database
      * @see #setName(String)
      * @see #setDriver(Driver)
      */
@@ -182,6 +187,7 @@ public class Database implements DatabaseElement {
 
     /**
      * Metodo per verificare l'uguaglianza con il database passato come parametro
+     *
      * @param databaseToCompare {@link Database} da confrontare
      * @return {@code true} <br>
      * <ul style="margin-top:0">
@@ -196,8 +202,7 @@ public class Database implements DatabaseElement {
      *     </li>
      * </ul>
      */
-    public boolean equals(Database databaseToCompare)
-    {
+    public boolean equals(Database databaseToCompare) {
         return Objects.equals(this.DATABASE_URL, databaseToCompare.getDATABASE_URL());
     }
 
@@ -291,8 +296,19 @@ public class Database implements DatabaseElement {
      * @see DatabaseStructure
      */
     public void buildDataStructure() {
-        // TODO: controllo database non raggiungibili
         this.databaseStructure = new DatabaseStructure(this);
+        ResearchParameters temperatureVariableNames = new ResearchParameters("temperature", "temp", "t");
+        this.usable = this.databaseStructure.findTable(temperatureVariableNames);
+        this.databaseStructure.setTemperatureColumnName(temperatureVariableNames.getColumnName());
+    }
+
+    /**
+     * Metodo utilizzato per indicare che il Database è utilizzabile.
+     *
+     * @return {@code true} | {@code false}
+     */
+    public boolean isUsable() {
+        return this.usable;
     }
 
     /**
@@ -382,7 +398,7 @@ public class Database implements DatabaseElement {
     public void insert() {
         this.checkStatement();
         DataCollector last_collector = PRIMARY_CONTROLLER.getSerialSelected().getDataCollectorList().getLastDataCollector();
-        String query = "INSERT INTO " + this.databaseStructure.getTableName() + this.databaseStructure.getTuple_ValuesName() + " VALUES (" +
+        String query = "INSERT INTO " + this.databaseStructure.getTableName() + this.databaseStructure.getTupleValuesName() + " VALUES (" +
                 "'" + last_collector.getCollectionDateTime() + "', " + last_collector.getData(this.databaseStructure.getTemperatureColumnName()) + ");";
 //        System.out.println(query);
         try {
@@ -484,11 +500,6 @@ public class Database implements DatabaseElement {
         return this.databaseStructure;
     }
 
-    /*TODO: funzione che verifichi la compatibilità col database all'esercizio
-
-      metodo di ricerca: mysql> desc <tabella letture> -> Type: [datetime, float, float]
-      (controlla se c'è l'id o meno)
-     */
 
     /**
      * <p>Metodo utilizzato per ottenere le informazioni del {@link Database} sotto forma di {@link Map}.</p>
