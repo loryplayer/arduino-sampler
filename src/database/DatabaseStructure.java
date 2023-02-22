@@ -9,10 +9,7 @@ import java.util.*;
  * Metodi principali:
  * <ul style="margin-top: 0px">
  *     <li>
- *         {@link #structureInitialize()}
- *     </li>
- *     <li>
- *         {@link #isUsable()}
+ *         {@link #findTable(ResearchParameters...)}
  *     </li>
  *     <li>
  *         {@link #getTableName()}
@@ -21,7 +18,7 @@ import java.util.*;
  *         {@link #getTemperatureColumnName()}
  *     </li>
  *     <li>
- *         {@link #getTuple_ValuesName()}
+ *         {@link #getTupleValuesName()}
  *     </li>
  * </ul>
  */
@@ -39,12 +36,6 @@ public class DatabaseStructure {
     private String temperatureColumnName;
 
     /**
-     * Array di variabili di tipo stringa, contenente i nomi generici relativi alla temperatura <i>(a partire dal nome completo fino alla sua abbreviazione)</i>.
-     */
-    private final String[] defaultTypeTemperatureNames = new String[]{"temperature", "temp", "t"};
-
-
-    /**
      * Variabile di tipo stringa che assumerà il nome della tabella in cui verranno salvati i dati.
      */
     private String tableName;
@@ -54,21 +45,146 @@ public class DatabaseStructure {
      */
     private final Database database;
 
-    /**
-     * Valore di tipo booleano che identifica se questa struttura dati è utilizzabile.
-     */
-    private boolean usable = false;
-
 
     /**
-     * Costruttore della Classe {@link DatabaseStructure}, si occupa d'inizializzare la struttura del {@link Database}.
+     * Costruttore della Classe {@link DatabaseStructure}, si occupa d'inizializzare il {@link #database}.
      *
      * @param database {@link Database} a cui fa riferimento
-     * @see #structureInitialize()
      */
     public DatabaseStructure(Database database) {
         this.database = database;
-        this.structureInitialize();
+    }
+
+    /**
+     * Metodo utilizzato per trovare la tabella in cui salvare i dati.
+     *
+     * @param parameters lista di {@link ResearchParameters} utilizzati per filtrare la tabella voluta
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se viene trovata la tabella che corrisponde ai parametri di ricerca
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se non viene trovata alcuna tabella
+     *     </li>
+     * </ul>
+     * @see ResearchParameters
+     * @see DatabaseTableFinder
+     */
+    public boolean findTable(ResearchParameters... parameters) {
+        DatabaseTableFinder databaseTableFinder = new DatabaseTableFinder(this.database);
+        this.tableName = databaseTableFinder.findTableName(parameters);
+        this.timeColumnName = databaseTableFinder.getTimeColumnName();
+        return tableName != null;
+    }
+
+
+    /**
+     * Metodo utilizzato per ottenere il nome della tabella in cui salvare i dati.
+     *
+     * @return {@link #tableName}
+     */
+    public String getTableName() {
+        return this.tableName;
+    }
+
+
+    /**
+     * Metodo utilizzato per inizializzare la variabile {@link #temperatureColumnName}
+     *
+     * @param temperatureColumnName variabile String contenente il nome della colonna
+     */
+    public void setTemperatureColumnName(String temperatureColumnName) {
+        this.temperatureColumnName = temperatureColumnName;
+    }
+
+    /**
+     * Metodo utilizzato per ottenere il nome della colonna riferita alla temperatura
+     *
+     * @return {@link #temperatureColumnName}
+     */
+    public String getTemperatureColumnName() {
+        return this.temperatureColumnName;
+    }
+
+
+    /**
+     * Metodo utilizzato per ottenere i nomi relativi alle tabelle.
+     * <p>viene utilizzato nel metodo {@link Database#insert()}.</p>
+     *
+     * @return Stringa, struttura:
+     * <code>({@link #timeColumnName}, {@link #temperatureColumnName}</code>
+     */
+    public String getTupleValuesName() {
+        return " (" + this.timeColumnName + ", " + this.temperatureColumnName + ") ";
+    }
+}
+
+
+/**
+ * <p>Classe DatabaseTableFinder, utilizzata per cercare e trovare una tabella specifica, attraverso {@link ResearchParameters}, all'interno di un {@link Database}.</p>
+ * Metodi principali:
+ * <ul style="margin-top: 0px">
+ *     <li>
+ *         {@link #findTableName(ResearchParameters...)}
+ *     </li>
+ *     <li>
+ *         {@link #getTimeColumnName()}
+ *     </li>
+ * </ul>
+ */
+class DatabaseTableFinder {
+
+    /**
+     * {@link Database} in cui effettuare la ricerca.
+     */
+    private final Database database;
+
+    /**
+     * Stringa contenente il nome della tabella trovata.
+     */
+    private String tableName;
+
+    /**
+     * Stringa contenente il nome della colonna relativa al tempo all'interno della tabella trovata.
+     */
+    private String timeColumnName;
+
+    /**
+     * Costruttore della Classe {@link DatabaseTableFinder}, inizializza il {@link #database}.
+     *
+     * @param database {@link Database} in cui effettuare la ricerca
+     */
+    public DatabaseTableFinder(Database database) {
+        this.database = database;
+    }
+
+    /**
+     * Metodo utilizzato per verificare che ogni parametro di ricerca è stato soddisfatto.
+     *
+     * @param researchParameters {@link ResearchParameters}, parametro di ricerca
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se ogni parametro di ricerca è stato rispettato
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se almeno un parametro di ricerca non è stato rispettato
+     *     </li>
+     * </ul>
+     */
+    private boolean checkResults(ResearchParameters... researchParameters) {
+        boolean output = true;
+        for (ResearchParameters parameters : researchParameters) {
+            output &= parameters.hasResult();
+        }
+        return output;
     }
 
     /**
@@ -107,39 +223,88 @@ public class DatabaseStructure {
      *
      * @see #isSimilar(String, String)
      */
-    public void structureInitialize() {
-        try (PreparedStatement prestmt_tables = this.database.getStatement().getConnection().prepareStatement("SHOW TABLES;")) {
-            ResultSet tables = prestmt_tables.executeQuery();
+    public String findTableName(ResearchParameters... parameters) {
+
+        try (PreparedStatement preparedStatementTable = this.database.getStatement().getConnection().prepareStatement("SHOW TABLES;")) {
+            ResultSet tables = preparedStatementTable.executeQuery();
             while (tables.next()) {
-                String table_name = tables.getString(1);
-                PreparedStatement prestmt_describe = this.database.getStatement().getConnection().prepareStatement("DESCRIBE " + this.database.getName() + "." + table_name + " ;");
-                ResultSet describe = prestmt_describe.executeQuery();
-                boolean tableUsable = false;
-                while (describe.next()) {
-                    String field = describe.getString(1);
-                    String type = describe.getString(2);
-                    if (Objects.equals(type, "int") && Objects.equals(describe.getString(4), "PRI") && Objects.equals(describe.getString(6), "auto_increment"))
-                        tableUsable = true;
-                    if (Objects.equals(type, "float") || Objects.equals(type, "double")) {
-                        for (String default_field : this.defaultTypeTemperatureNames) {
-                            if (this.isSimilar(field, default_field)) {
-                                this.temperatureColumnName = field;
-                                this.tableName = table_name;
-                                break;
-                            }
-                        }
-                    } else if (Objects.equals(type, "datetime")) {
-                        this.timeColumnName = field;
-                        this.tableName = table_name;
-                    }
-                }
-                this.timeColumnName = (tableUsable) ? this.timeColumnName : null;
-                this.temperatureColumnName = (tableUsable) ? this.temperatureColumnName : null;
+                checkTableUsability(tables, parameters);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        this.usable = this.timeColumnName != null && this.temperatureColumnName != null;
+        return this.tableName;
+    }
+
+
+    /**
+     * Sottometodo di {@link #findTableName(ResearchParameters...)}, si occupa di determinare se una tabella può essere utilizzata.
+     *
+     * @param tables     {@link ResultSet} contenente le informazioni relative a una tabella
+     * @param parameters {@link ResearchParameters}, parametri di ricerca
+     * @throws SQLException <ul>
+     *                      <li>
+     *                      se insorgono degli errori durante la comunicazione con il RDMBS
+     *                      </li>
+     *                      </ul>
+     */
+    private void checkTableUsability(ResultSet tables, ResearchParameters... parameters) throws SQLException {
+        String table_name = tables.getString(1);
+        PreparedStatement preparedStatementDescribe = this.database.getStatement().getConnection().prepareStatement("DESCRIBE " + this.database.getName() + "." + table_name + " ;");
+        ResultSet describe = preparedStatementDescribe.executeQuery();
+        boolean tableUsable = true;
+        while (describe.next()) {
+            String field = describe.getString(1);
+            String type = describe.getString(2);
+            String key = describe.getString(4);
+            String extra = describe.getString(6);
+            tableUsable &= isVariableMatched(table_name, field, type, key, extra, parameters);
+        }
+        tableUsable &= checkResults(parameters);
+        this.timeColumnName = (tableUsable) ? this.timeColumnName : null;
+        this.tableName = (tableUsable) ? this.tableName : null;
+    }
+
+    /**
+     * Sottometodo di {@link #checkTableUsability(ResultSet, ResearchParameters...)}, si occupa di verificare se una variabile all'interno della tabella rispetta il parametro di ricerca definito da {@link ResearchParameters}.
+     *
+     * @param table_name Stringa contenente il nome della tabella
+     * @param field      Stringa contenente il nome della variabile
+     * @param type       Stringa contenente il tipo della variabile
+     * @param key        Stringa contenente le informazioni riguardanti le chiavi primarie
+     * @param extra      Stringa contenente parametri extra della variabile
+     * @param parameters {@link ResearchParameters}, parametri di ricerca
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se la variabile selezionata rispetta un parametro di ricerca
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se la variabile selezionata non rispetta nessun parametro di ricerca
+     *     </li>
+     * </ul>
+     */
+    private boolean isVariableMatched(String table_name, String field, String type, String key, String extra, ResearchParameters... parameters) {
+        if (Objects.equals(type, "int") && Objects.equals(key, "PRI") && Objects.equals(extra, "auto_increment"))
+            return true;
+        else if (Objects.equals(type, "float") || Objects.equals(type, "double")) {
+            for (ResearchParameters researchParameters : parameters) {
+                for (String default_field : researchParameters.getParameters()) {
+                    if (this.isSimilar(field, default_field)) {
+                        researchParameters.setColumnName(field);
+                        return true;
+                    }
+                }
+            }
+        } else if (Objects.equals(type, "datetime")) {
+            this.timeColumnName = field;
+            this.tableName = table_name;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -297,51 +462,144 @@ public class DatabaseStructure {
     }
 
     /**
-     * Metodo utilizzato per indicare che il Database è utilizzabile.
-     *
-     * @return {@code true} | {@code false}
-     */
-    public boolean isUsable() {
-        return this.usable;
-    }
-
-    /**
-     * Metodo utilizzato per ottenere il nome della tabella in cui salvare i dati.
-     *
-     * @return {@link #tableName}
-     */
-    public String getTableName() {
-        return this.tableName;
-    }
-
-    /**
-     * Metodo utilizzato per ottenere il nome della colonna riferita alla temperatura
-     *
-     * @return {@link #temperatureColumnName}
-     */
-    public String getTemperatureColumnName() {
-        return this.temperatureColumnName;
-    }
-
-
-    /**
-     * Metodo utilizzato per ottenere il nome della colonna riferita al tempo
+     * Metodo utilizzato per ottenere il nome della colonna relativo al tempo
      *
      * @return {@link #timeColumnName}
      */
-
     public String getTimeColumnName() {
         return this.timeColumnName;
     }
+}
+
+/**
+ * <p>Classe ResearchParameters, utilizzata per creare i parametri di ricerca per trovare una specifica variabile all'interno di una database tabella situata in un {@link Database}.
+ * Lo scopo di questa Classe è quello d'identificare la posizione nella quale salvare i dati ricevuti su un {@link Database} nella colonna corretta.
+ *
+ * </p>
+ * Metodi principali:
+ * <ul style="margin-top: 0px">
+ *     <li>
+ *         {@link #add(String)}
+ *     </li>
+ *     <li>
+ *         {@link #hasResult()}
+ *     </li>
+ *     <li>
+ *         {@link #setColumnName(String)}
+ *     </li>
+ *     <li>
+ *         {@link #getColumnName()}
+ *     </li>
+ *     <li>
+ *         {@link #getParameters()}
+ *     </li>
+ * </ul>
+ */
+class ResearchParameters {
+    /**
+     * Lista di stringhe che identificano i parametri di ricerca.
+     * <p>
+     * I parametri sono delle stringhe che vengono confrontate con il nome delle colonne contenute nelle varie tabelle, per ogni stringa viene verificato se è simile al nome della colonna selezionata.
+     * </p>
+     * <p>
+     * Es:
+     * String[] parameters = new String[]{"temperature", "temp", "t"};
+     * <pre>
+     *
+     * _______ _____________ __________
+     * | index | temperature | humidity |
+     * |-------|-------------|----------|
+     * |  ...  |    ...      |   ...    |
+     *
+     * -----------------------------------------
+     * isSimilar("index","temperature") -> false
+     * isSimilar("index","temp") -> false
+     * isSimilar("index","t") -> false
+     * -----------------------------------------
+     * isSimilar("temperature","temperature") -> true <b>MATCHED</b>
+     * -----------------------------------------
+     * </pre>
+     */
+    private String[] parameters = new String[0];
 
     /**
-     * Metodo utilizzato per ottenere i nomi relativi alle tabelle.
-     * <p>viene utilizzato nel metodo {@link Database#insert()}.</p>
-     *
-     * @return Stringa, struttura:
-     * <code>({@link #timeColumnName}, {@link #temperatureColumnName}</code>
+     * Stringa contenente il nome della colonna trovata tramite la ricerca.
      */
-    public String getTuple_ValuesName() {
-        return " (" + this.timeColumnName + ", " + this.temperatureColumnName + ") ";
+    private String columnName;
+
+    /**
+     * Variabile booleana che indica lo stato di ricerca.
+     */
+    private boolean found = false;
+
+    /**
+     * Costruttore della Classe {@link ResearchParameters}, aggiunge le stringhe passate come parametro ai parametri di ricerca.
+     *
+     * @param parameters Lista di stringhe identificabili come parametri di ricerca
+     */
+    public ResearchParameters(String... parameters) {
+        for (String parameter : parameters)
+            this.add(parameter);
+    }
+
+    /**
+     * Metodo utilizzato per aggiungere i parametri di ricerca all'interno di {@link #parameters}.
+     *
+     * @param parameter Stringa contenete il valore corrispondente al parametro di ricerca
+     */
+    public void add(String parameter) {
+        int noParameters = this.parameters.length;
+        String[] newParameters = new String[noParameters + 1];
+        System.arraycopy(this.parameters, 0, newParameters, 0, noParameters);
+        newParameters[noParameters] = parameter;
+        this.parameters = newParameters;
+    }
+
+    /**
+     * Metodo utilizzato per ottenere lo stato della ricerca.
+     *
+     * @return {@code true} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se è stata trovata la variabile che rispetta i parametri di ricerca
+     *     </li>
+     * </ul>
+     * {@code false} <br>
+     * <ul style="margin-top:0">
+     *     <li>
+     *         se non è ancora stata trovata la variabile che rispetta i parametri di ricerca
+     *     </li>
+     * </ul>
+     */
+    public boolean hasResult() {
+        return this.found;
+    }
+
+    /**
+     * Metodo utilizzato per inizializzare la variabile {@link #columnName}, viene quindi trovata la variabile cercata.
+     *
+     * @param columnName Stringa contenente il nome della colonna ricercata
+     */
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+        this.found = true;
+    }
+
+    /**
+     * Metodo utilizzato per ottenere il nome della colonna nella quale salvare i dati.
+     *
+     * @return {@link #columnName}
+     */
+    public String getColumnName() {
+        return this.columnName;
+    }
+
+    /**
+     * Metodo utilizzato per ottenere i parametri di ricerca.
+     *
+     * @return {@link #parameters}
+     */
+    public String[] getParameters() {
+        return parameters;
     }
 }
