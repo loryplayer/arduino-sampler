@@ -44,8 +44,8 @@ public class TimerController {
     public void stop() {
         if (this.timer != null) {
             this.timer.cancel();
-            PRIMARY_CONTROLLER.getLogger().write(String.format("Numero campionamenti effettuati: %d", PRIMARY_CONTROLLER.getSerialSelected().getDataCollectorCount()));
             PRIMARY_CONTROLLER.getLogger().writeWithTime("Campionamento fermato...");
+            PRIMARY_CONTROLLER.getLogger().write(String.format("Numero campionamenti effettuati: %d", PRIMARY_CONTROLLER.getSerialSelected().getDataCollectorCount()));
         }
     }
 
