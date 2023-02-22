@@ -45,10 +45,10 @@ public class SerialList {
      */
 
     public void add(Serial serialPort) {
-        int no_serialports = this.serialPorts.length;
-        Serial[] new_serialPorts = new Serial[no_serialports + 1];
-        System.arraycopy(this.serialPorts, 0, new_serialPorts, 0, no_serialports);
-        new_serialPorts[no_serialports] = serialPort;
+        int noSerialports = this.serialPorts.length;
+        Serial[] new_serialPorts = new Serial[noSerialports + 1];
+        System.arraycopy(this.serialPorts, 0, new_serialPorts, 0, noSerialports);
+        new_serialPorts[noSerialports] = serialPort;
         this.serialPorts = new_serialPorts;
     }
 
@@ -58,16 +58,16 @@ public class SerialList {
      * @param serial {@link DataCollector}
      */
     public void remove(Serial serial) {
-        Serial[] new_serialPorts = new Serial[this.serialPorts.length];
+        Serial[] newSerialPorts = new Serial[this.serialPorts.length];
         int counter = 0;
         for (Serial current_serialport : this.serialPorts) {
             if (!Objects.equals(current_serialport.getPortLocation(), serial.getPortLocation())) {
-                new_serialPorts[counter] = current_serialport;
+                newSerialPorts[counter] = current_serialport;
                 counter++;
             }
         }
         Serial[] new_collectors_resized = new Serial[counter];
-        System.arraycopy(new_serialPorts, 0, new_collectors_resized, 0, counter);
+        System.arraycopy(newSerialPorts, 0, new_collectors_resized, 0, counter);
         this.serialPorts = new_collectors_resized;
     }
 
