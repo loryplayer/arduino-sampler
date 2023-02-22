@@ -230,6 +230,12 @@ public class IndexController {
     private Button stopButton;
 
     /**
+     * Variabile {@link TextField} utilizzata per indicare il tempo trascorso.
+     */
+    @FXML
+    private TextField timePassedIndicator;
+
+    /**
      * Variabile {@link LineChart} che identifica il grafico su cui inserire i dati appena raccolti.
      */
     @FXML
@@ -379,7 +385,7 @@ public class IndexController {
      * @see #setSerialPortsSelectorFactory()
      */
     public void loadInterface() {
-        Runnable scan_interface_thread = () -> {
+        Runnable scanInterfaceThread = () -> {
             this.startButton.setDisable(true);
             this.refreshInterfaceButton.setDisable(true);
             this.logger.write("-------------------Identificazione interfacce--------------------------");
@@ -414,7 +420,7 @@ public class IndexController {
                 this.refreshInterfaceButton.setDisable(false);
             });
         };
-        Thread run = new Thread(scan_interface_thread);
+        Thread run = new Thread(scanInterfaceThread);
         run.start();
         this.setSerialPortsSelectorFactory();
     }
@@ -422,7 +428,6 @@ public class IndexController {
 
     /**
      * Metodo utilizzato per richiamare il metodo {@link #loadInterface()} tramite pressione del {@link #refreshInterfaceButton}.
-     *
      */
     @FXML
     public void refreshInterface() {
@@ -835,6 +840,10 @@ public class IndexController {
     }
 
 
+    public void refreshTimePassedIndicator(String time) {
+        this.timePassedIndicator.setText(time);
+    }
+
     /**
      * Metodo utilizzato per mostrare i dati raccolti sul grafico.
      * <p>
@@ -867,9 +876,8 @@ public class IndexController {
         long last_time = last_collector.getCollectionTime();
         this.temperatureIndicator.setText(last_collector.getData(temperature_column_name).toString());
 
-
-        XYChart.Series<String, Float> series_t = new XYChart.Series<>();
-        series_t.setName("Temperatura");
+        XYChart.Series<String, Float> seriesTemperature = new XYChart.Series<>();
+        seriesTemperature.setName("Temperatura");
 
         this.time_axis.setLabel("Tempo [" + this.getSerialSelected().getSamplingSettings().getTimeIdentifier() + "]");
         /*
@@ -888,11 +896,11 @@ public class IndexController {
             DataCollector collector = this.getSerialSelected().getDataCollectorList().getDataCollectorFromEnd(i);
             if (collector != null) {
                 float temperature = collector.getData(temperature_column_name);
-                double time = Math.ceil((last_time - collector.getCollectionTime()) * this.getSerialSelected().getSamplingSettings().getMultiplier() * 100) / 100;
-                series_t.getData().add(new XYChart.Data<String, Float>(String.valueOf(time), temperature));
+                double time = -Math.ceil((last_time - collector.getCollectionTime()) * this.getSerialSelected().getSamplingSettings().getMultiplier() * 100) / 100;
+                seriesTemperature.getData().add(new XYChart.Data<String, Float>(String.valueOf(time), temperature));
             }
         }
-        this.chart.getData().add(series_t);
+        this.chart.getData().add(seriesTemperature);
         this.averageTemperatureIndicator.setText(this.getSerialSelected().getDataCollectorList().getDataAverages().get(temperature_column_name).toString());
         this.getDatabaseSelected().insert();
     }
@@ -1031,7 +1039,6 @@ public class IndexController {
 
     /**
      * Metodo utilizzato per fermare il campionamento.
-     *
      */
     @FXML
     public void stop() {
