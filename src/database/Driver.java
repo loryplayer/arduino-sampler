@@ -512,7 +512,7 @@ public class Driver implements DatabaseElement {
 
             while (rs.next()) {
                 Database db = new Database(this, rs.getString(1));
-                if (db.getDataStructure().isUsable())
+                if (db.isUsable())
                     db_list.add(db);
             }
         } catch (SQLException e) {
