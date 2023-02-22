@@ -299,10 +299,8 @@ public class ImExManager {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String se;
             while ((se = stdError.readLine()) != null)
-                if (se.toLowerCase().contains("error")) {
+                if (se.toLowerCase().contains("error"))
                     PRIMARY_CONTROLLER.getLogger().writeWithTime(se);
-                    return false;
-                }
             return true;
         } catch (IOException e) {
             PRIMARY_CONTROLLER.getLogger().writeWithTime(e.getMessage());
