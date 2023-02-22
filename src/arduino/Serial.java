@@ -9,7 +9,7 @@ import java.util.Objects;
 import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
 /**
- * <p>Classe Serial, utilizzata per usufruire dei metodi contenuti all'interno della libreria {@link com.fazecast.jSerialComm}.</p>
+ * <p>Classe Serial, utilizzata per usufruire dei metodi contenuti all'interno della libreria <a href="https://fazecast.github.io/jSerialComm/" target="_blank">com.fazecast.jSerialComm</a>.</p>
  * Metodi principali:
  * <ul style="margin-top: 0px">
  *     <li>
@@ -367,7 +367,7 @@ public class Serial {
             } catch (IOException e) {
                 //primary_controller.getLogger().write("Errore durante la lettura dalla seriale");
 //                this.close();
-//                System.out.println();
+//                System.out.println(e);
 //                 throw new RuntimeException(e);
             }
         }
