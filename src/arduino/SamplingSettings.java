@@ -43,6 +43,11 @@ public class SamplingSettings {
      */
     private String timeIdentifier = "ms";
 
+    public SamplingSettings()
+    {
+        this.setMultiplier();
+    }
+
     /**
      * Metodo utilizzato per impostare {@link #period_ms}.
      *
