@@ -8,7 +8,7 @@ import static interfaccia.IndexController.PRIMARY_CONTROLLER;
  * Metodi principali:
  * <ul style="margin-top: 0px">
  *     <li>
- *         {@link #add_data(int)}
+ *         {@link #addData(int)}
  *     </li>
  *     <li>
  *         {@link #isCollecting}
@@ -95,30 +95,27 @@ public class Collector {
 
     /**
      * Metodo per la raccolta dei dati, si differenzia in tre fasi:
-     * <h2 style="margin:0">Avvio della raccolta dei dati</h2>
-     * <p>
-     * Quando il valore in ingresso corrisponde al carattere di avvio trasmissione (vedi: {@link #DataDelimiterOpen})
-     * </p>
-     * <br>
-     *
-     * <h2 style="margin:0">Raccolta dei dati</h2>
-     * <p>
-     * Quando è stata avviata la raccolta, i dati successivamente ricevuti verranno immagazzinati nell'apposito array (vedi: {@link #last_raw_data_storage})
-     * </p><br>
-     * <h2 style="margin:0">Fine della raccolta dei dati</h2>
-     * <p>
-     * Quando il valor in ingresso corrisponde al carattere di fine trasmissione (vedi: {@link #DataDelimiterClose})
-     * </p>
-     * <br><br>
-     *
-     * <h2 style="margin:0">
-     * <b>Richiami</b>
-     * </h2>
      * <ul>
      *     <li>
-     *     Classe {@link CollectorList} al metodo {@link CollectorList#addDataToCollector(int, char)}
+     *         <b>Avvio della raccolta dei dati</b>:
+     *         <p>
+     *             Quando il valore in ingresso corrisponde al carattere di avvio trasmissione (vedi: {@link #DataDelimiterOpen})
+     *         </p>
+     *     </li>
+     *     <li>
+     *         <b>Raccolta dei dati</b>
+     *         <p>
+     *             Quando è stata avviata la raccolta, i dati successivamente ricevuti verranno immagazzinati nell'apposito array (vedi: {@link #last_raw_data_storage})
+     *         </p>
+     *     </li>
+     *     <li>
+     *         <b>Fine della raccolta dei dati</b>
+     *         <p>
+     *             Quando il valor in ingresso corrisponde al carattere di fine trasmissione (vedi: {@link #DataDelimiterClose})
+     *         </p>
      *     </li>
      * </ul>
+     * <br>
      *
      * @param data valore intero che contiene i dati ricevuti da Arduino
      * @return {@code true} <br>
@@ -137,7 +134,7 @@ public class Collector {
      *     </li>
      * </ul>
      */
-    public boolean add_data(int data) { // add_data è in un loop while. data assume valori: {"[", byte, byte, byte, byte, "]"}
+    public boolean addData(int data) { // add_data è in un loop while. data assume valori: {"[", byte, byte, byte, byte, "]"}
         if (data == this.DataDelimiterOpen && is_collecting) {
             PRIMARY_CONTROLLER.getLogger().write("Attenzione, è gia stata avviato un processo d'immagazzinamento dati");
             return false;
