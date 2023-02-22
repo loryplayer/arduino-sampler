@@ -24,7 +24,7 @@ import interfaces.DatabaseElement;
  *         {@link #remove(DatabaseElement)}
  *     </li>
  *     <li>
- *         {@link #setDataArchiver(DataArchiver)}
+ *         {@link #setDriverArchiver(DataArchiver)}
  *     </li>
  *     <li>
  *         {@link #save()}
@@ -50,7 +50,7 @@ public class DriverList implements ListHandler {
     /**
      * Oggetto {@link DataArchiver}, utilizzato per effettuare il salvataggio del {@link Driver}
      */
-    private DataArchiver dataArchiver;
+    private DataArchiver driverArchiver;
 
 
     /**
@@ -105,8 +105,8 @@ public class DriverList implements ListHandler {
      *
      * @param driverArchiver {@link DataArchiver} da utilizzare
      */
-    public void setDataArchiver(DataArchiver driverArchiver) {
-        this.dataArchiver = driverArchiver;
+    public void setDriverArchiver(DataArchiver driverArchiver) {
+        this.driverArchiver = driverArchiver;
     }
 
     /**
@@ -122,9 +122,9 @@ public class DriverList implements ListHandler {
      */
 
     public void save() {
-        this.dataArchiver.overrideFile();
+        this.driverArchiver.overrideFile();
         for (Driver driver : this.drivers) {
-            this.dataArchiver.save(driver, true);
+            this.driverArchiver.save(driver, true);
         }
     }
 
@@ -216,17 +216,17 @@ public class DriverList implements ListHandler {
      * @see DataArchiver#getElementsSaved()
      */
     public void getDriversFromDataArchiver() {
-        this.dataArchiver.loadData();
-        this.drivers = ((DriverList) this.dataArchiver.getElementsSaved()).getDriverConnections();
+        this.driverArchiver.loadData();
+        this.drivers = ((DriverList) this.driverArchiver.getElementsSaved()).getDriverConnections();
     }
 
 
     /**
      * Metodo utilizzato per ottenere il sistema di salvataggio del {@link Driver}
      *
-     * @return {@link #dataArchiver}
+     * @return {@link #driverArchiver}
      */
-    public DataArchiver getDataArchiver() {
-        return this.dataArchiver;
+    public DataArchiver getDriverArchiver() {
+        return this.driverArchiver;
     }
 }
