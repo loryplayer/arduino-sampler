@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.File;
@@ -320,6 +321,17 @@ public class RDBMSController extends DefaultController {
             //vengono abilitati gli oggetti per poter proseguire nella creazione del DataBase
         }));
         this.setTableFactory();
+    }
+
+    /**
+     * Metodo utilizzato per impostare lo Stage passato come parametro a questo controller.
+     * Imposta anche i valori minimi di dimensione per questa finestra.
+     * @param stage nuovo Stage
+     */
+    public void setStage(Stage stage)
+    {
+        super.setStage(stage);
+        this.setMinSize(new WindowSize(610, 440));
     }
 
     /**
