@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
 
 import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
@@ -93,5 +94,16 @@ public class SamplingSettingsController extends DefaultController {
             }
         });
         labelToChange.setText("Indicare se si vuole rappresentare la velocità di campionamento\nin base al numero di campioni al secondo o in base al periodo:");
+    }
+
+    /**
+     * Metodo utilizzato per impostare lo Stage passato come parametro a questo controller.
+     * Imposta anche i valori minimi di dimensione per questa finestra.
+     *
+     * @param stage nuovo Stage
+     */
+    public void setStage(Stage stage) {
+        super.setStage(stage);
+        this.setMinSize(new WindowSize(390, 190));
     }
 }
