@@ -11,6 +11,7 @@ import database.Driver;
 import database.DriverList;
 import file_managers.DataArchiver;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -167,6 +168,11 @@ public class IndexController {
      * @see #exit()
      */
     private boolean isOpened = false;
+
+    /**
+     * Variabile booleana utilizzata per verificare se il programma sta svolgendo l'operazione di campionamento.
+     */
+    private boolean isSampling = false;
 
     /*
     --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -336,6 +342,14 @@ public class IndexController {
         this.stage = stage;
         this.stage.setOnHidden(e -> this.exit());
         this.loadInterface();
+        ChangeListener<Number> stageSizeListener = (observableValue, oldValue, newValue) -> {
+            if (!this.isSampling)
+                this.refreshChart();
+        };
+        this.stage.widthProperty().addListener(stageSizeListener);
+        this.stage.heightProperty().addListener(stageSizeListener);
+        this.stage.setMinWidth(750);
+        this.stage.setMinHeight(450);
     }
 
     /**
@@ -640,7 +654,7 @@ public class IndexController {
      * @param data_archiver {@link DataArchiver} che fa riferimento al file di salvataggio riferito ai {@link Driver}
      */
     public void setDriverDataArchiver(DataArchiver data_archiver) {
-        this.driversUsed.setDataArchiver(data_archiver); //non è inseribile nel initialize() in quanto il metodo
+        this.driversUsed.setDriverArchiver(data_archiver); //non è inseribile nel initialize() in quanto il metodo
         // setDriver_data_archiver viene richiamato subito dopo e di conseguenza farei riferimento a un oggetto null
         this.driversUsed.getDriversFromDataArchiver();
     }
@@ -868,9 +882,9 @@ public class IndexController {
         float diff = (float) this.stage.getWidth() - this.chartFeature.widthInPixelsOfChart();  // 950 - 900 = 50;
         float div = diff / this.chartFeature.howManyPixelsYouNeedToAddNewPoints();     // 50/50 = 1;
         int k = (int) Math.ceil(div); // ceil(1) = 1;
-        int no_extra_points = k * this.chartFeature.numberOfPointsToAdd(); //1 * 2 = 2;
+        int noExtraPoints = k * this.chartFeature.numberOfPointsToAdd(); //1 * 2 = 2;
 
-        for (int i = 0; i < this.chartFeature.numberOfPoints_for_widthInPixelsOfChart() + no_extra_points; i++) {
+        for (int i = 0; i < this.chartFeature.numberOfPoints_for_widthInPixelsOfChart() + noExtraPoints; i++) {
             DataCollector collector = this.getSerialSelected().getDataCollectorList().getDataCollectorFromEnd(i);
             if (collector != null) {
                 float temperature = collector.getData(temperature_column_name);
@@ -962,7 +976,8 @@ public class IndexController {
      * </ul>
      */
     @FXML
-    void start() {
+    public void start() {
+        this.isSampling = true;
         this.timerController.start();
         this.startButton.setDisable(true);
         this.stopButton.setDisable(false);
@@ -1003,7 +1018,7 @@ public class IndexController {
      * </ul>
      */
     public void stopSampling() {
-
+        this.isSampling = false;
         this.timerController.stop();
         this.stopButton.setDisable(true);
         this.startButton.setDisable(false);
@@ -1019,7 +1034,7 @@ public class IndexController {
      *
      */
     @FXML
-    void stop() {
+    public void stop() {
         this.stopSampling();
     }
 
