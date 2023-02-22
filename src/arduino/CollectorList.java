@@ -131,9 +131,9 @@ public class CollectorList {
      * Metodo utilizzato per indirizzare i dati ricevuti da Arduino al {@link Collector} corrispondente in base all'identificatore.
      * @param data valore intero che contiene i dati ricevuti da Arduino
      * @param identifier identifier Identificatore del raccoglitore (vedi: {@link Collector#getIdentifier()})
-     * @return valore booleano restituito dal metodo {@link Collector#add_data(int)}
+     * @return valore booleano restituito dal metodo {@link Collector#addData(int)}
      */
     public boolean addDataToCollector(int data, char identifier) {
-        return this.getCollectorsFromIdentifier(identifier).add_data(data);
+        return this.getCollectorsFromIdentifier(identifier).addData(data);
     }
 }
