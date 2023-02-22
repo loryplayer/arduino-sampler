@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.util.Objects;
@@ -157,6 +158,28 @@ public class ImportDatabaseFromDriverController extends DefaultController {
         callBack.setDatabaseSelected(this.databasesSelectedList);
         this.databaseListView.setCellFactory(callBack);
 
+    }
+
+    /**
+     * Metodo utilizzato per impostare lo Stage passato come parametro a questo controller.
+     * Imposta anche i valori minimi di dimensione per questa finestra.
+     *
+     * @param stage nuovo Stage
+     */
+    public void setStage(Stage stage) {
+        super.setStage(stage);
+        this.setMinSize(new WindowSize(450, 440));
+    }
+
+    /**
+     * Metodo utilizzato per la chiusura della finestra corrente tramite la pressione del bottone "<i>Torna indietro</i>".
+     * Riapre la finestra delle importazioni.
+     * @param event L'evento catturato dal bottone
+     */
+    @FXML
+    public void goBack(ActionEvent event) {
+        this.exit();
+        this.createNewWindowWithPriority("Importa database", "import_database_choice_manager.fxml", new WindowSize(650, 400));
     }
 
 }
