@@ -58,7 +58,7 @@ public class Serial {
     /**
      * Variabile {@link CollectorList}, utilizzata per memorizzare i dati grezzi ricevuti dalla seriale.
      */
-    private CollectorList collector_used;
+    private CollectorList collectorUsed;
 
     /**
      * Variabile {@link DataCollectorList}, utilizzata per memorizzare i dati elaborati ricevuti dalla seriale.
@@ -178,7 +178,7 @@ public class Serial {
      *         {@link #dataCollectorUsed} (vedi: {@link DataCollectorList})
      *     </li>
      *     <li>
-     *         {@link #collector_used} (vedi: {@link CollectorList})
+     *         {@link #collectorUsed} (vedi: {@link CollectorList})
      *     </li>
      *     <li>
      *         {@link #samplingSettingsUsed} (vedi: {@link SamplingSettings})
@@ -190,10 +190,10 @@ public class Serial {
      */
     private void setDataCollector() {
         this.dataCollectorUsed = new DataCollectorList();
-        this.collector_used = new CollectorList();
+        this.collectorUsed = new CollectorList();
         this.samplingSettingsUsed = new SamplingSettings();
         Collector temperature_collector = new Collector('T');
-        this.collector_used.add(temperature_collector);
+        this.collectorUsed.add(temperature_collector);
     }
 
     /**
@@ -355,11 +355,11 @@ public class Serial {
                             return true;
                         }
                     } else if (Command == 'T') {
-                        boolean status = this.collector_used.addDataToCollector(data, Command);
+                        boolean status = this.collectorUsed.addDataToCollector(data, Command);
                         if (!status) // se si verificano errori durante la raccolta dei dati si lascia proseguire, se passa un tempo superiore a quello di timeout esce dalla funzione con valore [false]
                             continue;
                         // se sono sorti problemi durante la fase di raccolta dei dati, viene restituito false
-                        if (!this.collector_used.getCollectorsFromIdentifier(Command).isCollecting())
+                        if (!this.collectorUsed.getCollectorsFromIdentifier(Command).isCollecting())
                             return true;
                         // se ha finito di raccogliere dati allora esce restituendo true
                     }
@@ -402,7 +402,7 @@ public class Serial {
         boolean success = this.readCommand(cmd);
         if (!success)
             return null;
-        return this.collector_used.getCollectorsFromIdentifier(cmd).getLastDataAsFloat();
+        return this.collectorUsed.getCollectorsFromIdentifier(cmd).getLastDataAsFloat();
     }
 
     /**
