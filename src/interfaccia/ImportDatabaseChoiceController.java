@@ -133,10 +133,14 @@ public class ImportDatabaseChoiceController extends RDBMSController {
                 importManager.setTarget("mysql.exe");
                 String warningError;
                 if (importManager.find()) {
-                    if (importManager.importFromFile(file.getAbsolutePath()))
+                    if (importManager.importFromFile(file.getAbsolutePath())) {
+                        typeOfImport.selectToggle(importFromDriver);
+                        PRIMARY_CONTROLLER.getLogger().writeWithTime("Importazione verso il Driver " + this.selectedDriver.getJDBC_URL() + " completata...");
                         return;
+                    }
                     else {
                         warningError = "Non è stato possibile importare il database";
+                        PRIMARY_CONTROLLER.getLogger().write("Importazione verso il Driver " + this.selectedDriver.getJDBC_URL() + " fallita...");
                         PRIMARY_CONTROLLER.getLogger().write(warningError);
                     }
 
@@ -146,7 +150,8 @@ public class ImportDatabaseChoiceController extends RDBMSController {
                                 "\nsi consiglia di controllare la variabile secure_file_priv nel file my.ini";
                     else
                         warningError = "Attenzione!\nNon è stato possibile trovare " + importManager.getTarget();
-                    PRIMARY_CONTROLLER.getLogger().writeWithTime(warningError);
+                    PRIMARY_CONTROLLER.getLogger().writeWithTime("Importazione verso il Driver " + this.selectedDriver.getJDBC_URL() + " fallita...");
+                    PRIMARY_CONTROLLER.getLogger().write(warningError);
                 }
                 this.createWarningDialogWindowToGoBack("Problema durante l'esportazione", warningError, new WindowSize(375, 125));
             }
@@ -218,6 +223,17 @@ public class ImportDatabaseChoiceController extends RDBMSController {
             this.removeDriverButton.setDisable(false);
         }));
         this.setTableFactory();
+    }
+
+    /**
+     * Metodo utilizzato per impostare lo Stage passato come parametro a questo controller.
+     * Imposta anche i valori minimi di dimensione per questa finestra.
+     * @param stage nuovo Stage
+     */
+    public void setStage(Stage stage)
+    {
+        super.setStage(stage);
+        this.setMinSize(new WindowSize(660, 440));
     }
 
     /**
