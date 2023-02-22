@@ -4,6 +4,7 @@ import javafx.application.Platform;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import static interfaccia.IndexController.PRIMARY_CONTROLLER;
 
@@ -32,9 +33,26 @@ public class TimerController {
      * @see Serial#getSamplingSettings()
      */
     public void start() {
+        long startTime = System.currentTimeMillis();
+        TimerTask refreshTimePassedIndicatorTask = new TimerTask() {
+            @Override
+            public void run() {
+                long time = System.currentTimeMillis();
+                long timeDifference = time - startTime;
+                String hms = String.format("%02d:%02d:%02d.%03d", TimeUnit.MILLISECONDS.toHours(timeDifference),
+                        TimeUnit.MILLISECONDS.toMinutes(timeDifference) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timeDifference)),
+                        TimeUnit.MILLISECONDS.toSeconds(timeDifference) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDifference)),
+                        timeDifference - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(timeDifference))
+                );
+                Platform.runLater(() -> {
+                    PRIMARY_CONTROLLER.refreshTimePassedIndicator(hms);
+                });
+            }
+        };
         this.timer = new Timer();
         Controller timerController = new Controller();
-        timer.schedule(timerController, 0, (long) PRIMARY_CONTROLLER.getSerialSelected().getSamplingSettings().getPeriod_ms());
+        this.timer.schedule(refreshTimePassedIndicatorTask, 0, 100);
+        this.timer.schedule(timerController, 0, (long) PRIMARY_CONTROLLER.getSerialSelected().getSamplingSettings().getPeriod_ms());
         PRIMARY_CONTROLLER.getLogger().writeWithTime("Campionamento avviato...");
     }
 
@@ -73,7 +91,8 @@ class Controller extends TimerTask {
     @Override
     public void run() {
         Platform.runLater(() -> {
-            PRIMARY_CONTROLLER.getSerialSelected().readAndCollect();
+            if (PRIMARY_CONTROLLER.getSerialSelected() != null)
+                PRIMARY_CONTROLLER.getSerialSelected().readAndCollect();
             PRIMARY_CONTROLLER.refreshChart();
         });
     }
